@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="ja" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIER-KING Online</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        polarDark: '#0b1329',
+                        polarGlass: 'rgba(15, 23, 42, 0.85)',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- PeerJS for P2P Online -->
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Zen+Maru+Gothic:wght@500;700;900&display=swap');
+        
+        body {
+            font-family: 'Zen Maru Gothic', 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #0b1329 0%, #1e1b4b 50%, #2a083b 100%);
+            color: #f0f9ff;
+            user-select: none;
+            touch-action: manipulation;
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.85); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .animate-pop {
+            animation: fadeInScale 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Tier Row Colors */
+        .tier-s { background: linear-gradient(90deg, rgba(239, 68, 68, 0.3) 0%, rgba(245, 158, 11, 0.2) 100%); border-color: #f59e0b; }
+        .tier-a { background: linear-gradient(90deg, rgba(168, 85, 247, 0.3) 0%, rgba(217, 70, 239, 0.2) 100%); border-color: #a855f7; }
+        .tier-b { background: linear-gradient(90deg, rgba(59, 130, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%); border-color: #3b82f6; }
+        .tier-c { background: linear-gradient(90deg, rgba(16, 185, 129, 0.3) 0%, rgba(34, 197, 94, 0.2) 100%); border-color: #10b981; }
+        .tier-d { background: linear-gradient(90deg, rgba(100, 116, 139, 0.3) 0%, rgba(71, 85, 105, 0.2) 100%); border-color: #64748b; }
+
+        .tier-header-s { background: #ef4444; color: #ffffff; }
+        .tier-header-a { background: #a855f7; color: #ffffff; }
+        .tier-header-b { background: #3b82f6; color: #ffffff; }
+        .tier-header-c { background: #10b981; color: #ffffff; }
+        .tier-header-d { background: #64748b; color: #ffffff; }
+
+        .word-tile {
+            cursor: grab;
+            transition: all 0.15s ease;
+        }
+        .word-tile:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col justify-between overflow-x-hidden">
+
+    <!-- Header / Navbar -->
+    <header class="w-full p-4 md:p-5 glass-panel sticky top-0 z-40 border-b border-purple-500/20 flex justify-between items-center">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="location.reload()">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-400 via-purple-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-500/30 border border-amber-200/40">
+                <span class="text-3xl">👑</span>
+            </div>
+            <div>
+                <h1 class="font-black text-xl md:text-2xl tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-purple-200 to-indigo-300">
+                    TIER-KING Online
+                </h1>
+                <p class="text-[10px] md:text-xs text-purple-300/70 font-mono tracking-widest uppercase">ティア・キング オンライン</p>
+            </div>
+        </div>
+
+        <div id="headerInfo" class="hidden flex items-center space-x-3">
+            <div id="roomBadge" class="bg-slate-900/90 border border-purple-500/30 px-3.5 py-1.5 rounded-full text-xs md:text-sm font-mono font-bold text-purple-300 flex items-center gap-2 cursor-pointer hover:bg-slate-800 transition" onclick="copyRoomCode()">
+                <i class="fa-regular fa-copy"></i>
+                <span id="displayRoomCode">----</span>
+            </div>
+            <button id="soundToggleBtn" onclick="toggleSound()" class="w-10 h-10 rounded-full bg-slate-800/80 hover:bg-slate-700 border border-purple-500/30 flex items-center justify-center text-purple-300 text-base transition">
+                <i class="fa-solid fa-volume-high" id="soundIcon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-6 max-w-5xl flex-grow flex flex-col justify-center">
+
+        <!-- VIEW 1: LOBBY ENTRY -->
+        <div id="viewLobby" class="space-y-6 max-w-2xl mx-auto w-full">
+            <div class="text-center space-y-3 my-2">
+                <div class="inline-block px-4 py-1.5 bg-amber-500/20 text-amber-300 rounded-full text-xs md:text-sm font-bold border border-amber-400/30 shadow-lg backdrop-blur-md">
+                    価値観推理パーティゲーム 👑
+                </div>
+                <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight">TIER-KING Online</h2>
+                <p class="text-purple-200/80 text-xs md:text-sm max-w-lg mx-auto leading-relaxed">
+                    親が秘かに設定した「評価軸（裏テーマ）」を、Tier表上の単語の位置関係から見破れ！
+                </p>
+            </div>
+
+            <div class="glass-panel rounded-3xl p-6 shadow-2xl space-y-3">
+                <label class="block text-xs font-bold uppercase tracking-wider text-purple-200">プレイヤー名（ニックネーム）</label>
+                <input type="text" id="playerNameInput" maxlength="10" placeholder="名前を入力してください" 
+                    class="w-full bg-slate-950/80 border border-purple-500/40 rounded-2xl px-5 py-3.5 text-white focus:outline-none focus:border-amber-400 transition font-bold text-lg placeholder-slate-600">
+            </div>
+
+            <div class="glass-panel rounded-3xl p-6 shadow-2xl space-y-3">
+                <label class="block text-xs font-bold uppercase tracking-wider text-purple-200">部屋の合言葉（部屋コード）</label>
+                <input type="text" id="joinRoomCodeInput" placeholder="例: tierroom1" 
+                    class="w-full bg-slate-950/80 border border-purple-500/40 rounded-2xl px-5 py-3.5 text-white font-mono tracking-widest text-lg focus:outline-none focus:border-amber-400 transition placeholder-slate-600">
+                <p class="text-xs text-purple-300/60">全員で同じ合言葉を入力してください (3〜6人推奨)</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="glass-panel rounded-3xl p-6 shadow-2xl hover:border-amber-400/60 transition flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-300 flex items-center justify-center text-2xl mb-2 border border-amber-400/30">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-white">部屋を作る (ホスト)</h3>
+                    </div>
+                    <button id="btnCreateRoom" class="w-full bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white font-black text-lg py-3.5 rounded-2xl shadow-lg shadow-amber-500/20 transition transform active:scale-95">
+                        部屋を作成
+                    </button>
+                </div>
+
+                <div class="glass-panel rounded-3xl p-6 shadow-2xl hover:border-indigo-400/60 transition flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-2xl mb-2 border border-indigo-400/30">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-white">部屋に入る (ゲスト)</h3>
+                    </div>
+                    <button id="btnJoinRoom" class="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-amber-600 hover:from-indigo-400 hover:to-indigo-500 text-white font-black text-lg py-3.5 rounded-2xl shadow-lg shadow-indigo-500/20 transition transform active:scale-95">
+                        部屋に参加
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: ROOM LOBBY -->
+        <div id="viewRoomLobby" class="hidden space-y-5 max-w-2xl mx-auto w-full">
+            <div class="glass-panel rounded-3xl p-6 md:p-8 shadow-2xl space-y-6">
+                <div class="flex justify-between items-center border-b border-purple-500/20 pb-4">
+                    <div>
+                        <span class="text-xs font-bold text-purple-400 tracking-wider uppercase">ROOM LOBBY</span>
+                        <h2 class="text-2xl md:text-3xl font-black text-white flex items-center gap-2">
+                            合言葉: <span id="lobbyRoomCode" class="font-mono text-amber-300">----</span>
+                        </h2>
+                    </div>
+                    <button onclick="copyRoomCode()" class="bg-slate-800/80 hover:bg-slate-700 text-purple-300 text-xs md:text-sm font-bold px-4 py-2 rounded-2xl border border-purple-500/30 flex items-center gap-2 transition">
+                        <i class="fa-regular fa-copy"></i> コピー
+                    </button>
+                </div>
+
+                <!-- Player Avatar Color Selector -->
+                <div class="bg-slate-950/80 rounded-2xl p-4 border border-purple-500/30 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <label class="block text-xs font-bold text-purple-200 uppercase tracking-wider">マイカラー選択</label>
+                        <span class="text-[11px] text-purple-300/70">他プレイヤーと重複不可</span>
+                    </div>
+                    <div id="lobbyColorPalette" class="flex flex-wrap gap-2.5 pt-1"></div>
+                </div>
+
+                <!-- Game Outline -->
+                <div class="bg-slate-950/60 rounded-2xl p-4 border border-purple-500/20 text-xs md:text-sm text-purple-100 space-y-1.5 leading-relaxed">
+                    <div class="font-bold text-amber-300">【ゲームの流れ】</div>
+                    <div>1. <b>親の決定</b>：毎ラウンド1名が親になり、隠された「評価軸（裏テーマ）」を設定します。</div>
+                    <div>2. <b>単語の提出</b>：全員がお題（ジャンル）に合った単語を記入して提出します（提出単語は全員に一覧公開されます）。</div>
+                    <div>3. <b>Tier配置</b>：親が単語タイルをTier表（S〜D）に配置します。</div>
+                    <div>4. <b>推理</b>：子は親の裏テーマを推測して解答！他の人の提出予想もリアルタイム表示されます。</div>
+                </div>
+
+                <!-- Player List -->
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center text-xs font-bold text-purple-200">
+                        <span>参加プレイヤー (<span id="playerCount">0</span>名)</span>
+                        <span class="text-purple-400/70">3名以上を推奨</span>
+                    </div>
+                    <div id="playerList" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-1"></div>
+                </div>
+
+                <div class="pt-2">
+                    <button id="startGameBtn" onclick="startGame()" class="hidden w-full bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 hover:from-amber-400 hover:to-indigo-400 text-white font-black text-lg py-4 rounded-2xl shadow-xl shadow-amber-500/30 transition transform active:scale-95">
+                        ゲームを開始する 🚀
+                    </button>
+                    <p id="waitingForHostMsg" class="text-center text-purple-300/70 text-xs font-medium animate-pulse">
+                        ホストがゲームを開始するのを待っています...
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 3: GAME PLAYING -->
+        <div id="viewGame" class="hidden space-y-5 w-full max-w-4xl mx-auto relative">
+            
+            <!-- Game Header Status & Score Board -->
+            <div class="glass-panel p-4 rounded-3xl border border-purple-500/20 space-y-3">
+                <div class="flex flex-wrap justify-between items-center gap-3">
+                    <div class="flex items-center space-x-3">
+                        <div id="phaseBadge" class="bg-amber-500/20 text-amber-300 px-3.5 py-1.5 rounded-2xl border border-amber-400/40 text-xs font-mono font-bold shadow">
+                            ラウンド 1
+                        </div>
+                        <div id="parentBadge" class="bg-purple-500/20 text-purple-300 px-3.5 py-1.5 rounded-2xl border border-purple-400/40 text-xs font-bold">
+                            親: --
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Header Score Board -->
+                <div class="border-t border-purple-500/20 pt-2.5">
+                    <div class="text-[10px] font-bold text-purple-300 uppercase tracking-wider mb-1.5">得点表</div>
+                    <div id="headerScoreList" class="flex flex-wrap gap-2"></div>
+                </div>
+            </div>
+
+            <!-- Topic Banner -->
+            <div id="topicCard" class="glass-panel rounded-3xl p-5 text-center shadow-2xl border border-purple-500/30 bg-slate-950/80 space-y-2">
+                <span id="topicCategoryBadge" class="inline-block px-3 py-1 bg-purple-500/20 text-purple-300 border border-purple-400/30 rounded-full text-xs font-bold">
+                    公開ジャンル
+                </span>
+                <h2 id="questionTopic" class="text-2xl md:text-4xl font-black text-white">「------」</h2>
+                <div id="secretThemeBox" class="hidden pt-2 text-xs font-bold text-amber-300 bg-amber-500/10 py-1.5 px-3 rounded-xl border border-amber-400/30 inline-block">
+                    🔒 親用・秘密の裏テーマ: <span id="secretThemeText">--</span>
+                </div>
+            </div>
+
+            <!-- PHASE 1: PARENT THEME SETUP (Host/Parent) -->
+            <div id="subViewParentTheme" class="hidden glass-panel p-6 rounded-3xl border border-purple-500/30 space-y-4 max-w-xl mx-auto">
+                <div class="text-center space-y-1">
+                    <h3 class="text-xl font-black text-white">あなたが今回の「親」です！</h3>
+                    <p class="text-xs text-purple-200/80">ジャンルに沿った隠された評価軸（裏テーマ）を設定してください。</p>
+                </div>
+                
+                <div class="flex justify-end">
+                    <button onclick="fillRandomPresetTopic()" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/40 px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-dice"></i> ランダムでお題を選ぶ (全200種+)
+                    </button>
+                </div>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-purple-200 mb-1">公開ジャンル</label>
+                        <input type="text" id="parentCategoryInput" placeholder="例: 野菜の" class="w-full bg-slate-950 border border-purple-500/40 rounded-xl px-4 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-300 mb-1">秘密の評価軸（裏テーマ） 子には隠されます</label>
+                        <input type="text" id="parentSecretInput" placeholder="例: 甘さ順" class="w-full bg-slate-950 border border-amber-500/50 rounded-xl px-4 py-2.5 text-sm font-bold text-amber-300 focus:outline-none focus:border-amber-400">
+                    </div>
+                    <button onclick="submitParentTheme()" class="w-full bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white font-black text-base py-3.5 rounded-2xl shadow-lg transition transform active:scale-95">
+                        お題と裏テーマを決定する ➔
+                    </button>
+                </div>
+            </div>
+
+            <div id="subViewParentWaiting" class="hidden text-center py-8 glass-panel rounded-3xl p-6">
+                <i class="fa-solid fa-spinner fa-spin text-3xl text-amber-300 mb-3"></i>
+                <p class="text-sm font-bold text-purple-200">親が裏テーマを設定しています...</p>
+            </div>
+
+            <!-- PHASE 2: WORD INPUT -->
+            <div id="subViewWordInput" class="hidden glass-panel p-6 rounded-3xl border border-purple-500/30 space-y-4 max-w-xl mx-auto">
+                <div class="text-center space-y-1">
+                    <h3 class="text-xl font-black text-white">単語タイルを1つ記入してください</h3>
+                    <p class="text-xs text-purple-200/80">ジャンル「<span id="inputCategoryNotice" class="text-amber-300 font-bold">--</span>」に当てはまる単語を入力！</p>
+                </div>
+                <div class="space-y-3">
+                    <input type="text" id="wordTileInput" maxlength="15" placeholder="単語を入力 (例: トマト)" class="w-full bg-slate-950 border border-purple-500/40 rounded-xl px-4 py-3 text-base font-bold text-white focus:outline-none focus:border-amber-400">
+                    <button id="btnSubmitWord" onclick="submitMyWordTile()" class="w-full bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white font-black text-base py-3.5 rounded-2xl shadow-lg transition transform active:scale-95">
+                        単語を提出する ➔
+                    </button>
+                    <p id="wordWaitMsg" class="hidden text-xs text-center text-purple-300/80 font-bold animate-pulse">
+                        全員の提出を待っています... (<span id="submittedWordCount">0</span>/<span id="totalWordCount">0</span>)
+                    </p>
+                </div>
+            </div>
+
+            <!-- PHASE 3: TIER BOARD & GUESSING -->
+            <div id="subViewTierBoard" class="hidden space-y-5">
+                
+                <!-- Shared All Submitted Words Banner -->
+                <div class="glass-panel p-4 rounded-3xl border border-purple-500/20 space-y-2">
+                    <div class="flex justify-between items-center text-xs font-bold text-purple-200">
+                        <span>提出された単語一覧（全員共有）</span>
+                        <span class="text-purple-400/80 text-[11px]">被りや候補の参考にしてください</span>
+                    </div>
+                    <div id="sharedSubmittedWordsList" class="flex flex-wrap gap-2 pt-1"></div>
+                </div>
+
+                <!-- Interactive Tier Table -->
+                <div class="glass-panel p-5 rounded-3xl border border-purple-500/30 space-y-3">
+                    <div class="flex justify-between items-center border-b border-purple-500/20 pb-2">
+                        <h3 class="text-base font-black text-white flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group text-amber-300"></i> Ranking Tier Board
+                        </h3>
+                        <span id="tierInstructionText" class="text-xs text-purple-300/90 font-bold"></span>
+                    </div>
+
+                    <div class="space-y-2 font-bold text-sm">
+                        <!-- Tier S -->
+                        <div class="flex items-center rounded-2xl border tier-s overflow-hidden min-h-[56px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'S')">
+                            <div class="w-12 md:w-16 h-full tier-header-s flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-amber-500/40">S</div>
+                            <div id="tier_S" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
+                        </div>
+                        <!-- Tier A -->
+                        <div class="flex items-center rounded-2xl border tier-a overflow-hidden min-h-[56px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'A')">
+                            <div class="w-12 md:w-16 h-full tier-header-a flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-purple-500/40">A</div>
+                            <div id="tier_A" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
+                        </div>
+                        <!-- Tier B -->
+                        <div class="flex items-center rounded-2xl border tier-b overflow-hidden min-h-[56px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'B')">
+                            <div class="w-12 md:w-16 h-full tier-header-b flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-blue-500/40">B</div>
+                            <div id="tier_B" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
+                        </div>
+                        <!-- Tier C -->
+                        <div class="flex items-center rounded-2xl border tier-c overflow-hidden min-h-[56px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'C')">
+                            <div class="w-12 md:w-16 h-full tier-header-c flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-emerald-500/40">C</div>
+                            <div id="tier_C" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
+                        </div>
+                        <!-- Tier D -->
+                        <div class="flex items-center rounded-2xl border tier-d overflow-hidden min-h-[56px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'D')">
+                            <div class="w-12 md:w-16 h-full tier-header-d flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-slate-500/40">D</div>
+                            <div id="tier_D" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
+                        </div>
+                    </div>
+
+                    <!-- Unassigned Pool for Parent Placement -->
+                    <div id="unassignedPoolBox" class="hidden bg-slate-950/80 p-3.5 rounded-2xl border border-purple-500/30 space-y-2">
+                        <div class="text-xs font-bold text-amber-300">未配置の単語 ドラッグまたはタップでTier行へ配置</div>
+                        <div id="unassignedTileList" class="flex flex-wrap gap-2 min-h-[40px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'UNASSIGNED')"></div>
+                        <button id="btnFinishTierPlacement" onclick="finishTierPlacement()" class="w-full mt-2 bg-gradient-to-r from-amber-500 to-purple-600 hover:from-amber-400 hover:to-purple-500 text-white font-black py-2.5 rounded-xl shadow text-xs">
+                            Tier配置を完了して推論へ進む ➔
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Shared Guesses Display (全員の予想一覧) -->
+                <div id="sharedChildGuessesBox" class="glass-panel p-4 rounded-3xl border border-amber-500/30 space-y-2 bg-slate-950/80">
+                    <div class="flex justify-between items-center border-b border-purple-500/20 pb-1.5">
+                        <span class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-comments"></i> 子みんなの出している裏テーマ予想一覧（全員共有）
+                        </span>
+                    </div>
+                    <div id="sharedChildGuessesList" class="space-y-1.5 min-h-[30px] pt-1"></div>
+                </div>
+
+                <!-- Child Guessing Form -->
+                <div id="childGuessArea" class="hidden glass-panel p-5 rounded-3xl border border-purple-500/30 space-y-3 max-w-xl mx-auto">
+                    <div class="text-center">
+                        <h4 class="font-black text-lg text-white">親の「評価軸（裏テーマ）」を推測！</h4>
+                        <p class="text-xs text-purple-200/80">（例: 甘さ順、値段が高い順、好き嫌いが分かれる順 など）</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="childGuessInput" placeholder="裏テーマを入力" class="flex-grow bg-slate-950 border border-purple-500/40 rounded-xl px-4 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
+                        <button onclick="submitChildGuess()" class="bg-gradient-to-r from-amber-500 to-purple-600 hover:from-amber-400 hover:to-purple-500 text-white font-black px-5 py-2.5 rounded-xl text-xs shadow transition transform active:scale-95">
+                            解答提出
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Parent Judgment Control Area -->
+                <div id="parentJudgeArea" class="hidden glass-panel p-5 rounded-3xl border border-amber-500/40 space-y-3 bg-slate-950/90 max-w-2xl mx-auto">
+                    <div class="text-center">
+                        <span class="text-xs font-bold text-amber-300">親専用 解答の採点</span>
+                        <p class="text-xs text-purple-200">正解の予想があれば「正解 ◯」を押してください。</p>
+                    </div>
+                    <div id="parentJudgeList" class="space-y-2"></div>
+                    <button onclick="finishRoundWithoutWinner()" class="w-full bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 font-bold py-2.5 rounded-xl text-xs transition">
+                        正解者なしで次のステップ・ラウンドへ ➔
+                    </button>
+                </div>
+            </div>
+
+            <!-- SUBVIEW RESULT (WITH TIER DISPLAY) -->
+            <div id="subViewResult" class="hidden space-y-5">
+                <div class="glass-panel p-6 md:p-8 rounded-3xl border border-purple-500/30 text-center space-y-4">
+                    <div class="space-y-1">
+                        <span class="px-3.5 py-1 bg-amber-500/20 text-amber-300 border border-amber-400/30 rounded-full text-xs font-bold uppercase">
+                            ROUND FINISHED
+                        </span>
+                        <h3 id="resultTitle" class="text-2xl md:text-3xl font-black text-white pt-2">ラウンド終了！</h3>
+                        <p id="resultSecretText" class="text-base md:text-xl font-black text-amber-300">正解の評価軸: 「--」</p>
+                    </div>
+                </div>
+
+                <!-- Finished Round Tier Display -->
+                <div class="glass-panel p-5 rounded-3xl border border-purple-500/30 space-y-3">
+                    <div class="flex justify-between items-center border-b border-purple-500/20 pb-2">
+                        <h3 class="text-base font-black text-white flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group text-amber-300"></i> 完成した Tier 表 (答え合わせ)
+                        </h3>
+                    </div>
+
+                    <div class="space-y-2 font-bold text-sm">
+                        <div class="flex items-center rounded-2xl border tier-s overflow-hidden min-h-[56px]">
+                            <div class="w-12 md:w-16 h-full tier-header-s flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-amber-500/40">S</div>
+                            <div id="result_tier_S" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
+                        </div>
+                        <div class="flex items-center rounded-2xl border tier-a overflow-hidden min-h-[56px]">
+                            <div class="w-12 md:w-16 h-full tier-header-a flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-purple-500/40">A</div>
+                            <div id="result_tier_A" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
+                        </div>
+                        <div class="flex items-center rounded-2xl border tier-b overflow-hidden min-h-[56px]">
+                            <div class="w-12 md:w-16 h-full tier-header-b flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-blue-500/40">B</div>
+                            <div id="result_tier_B" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
+                        </div>
+                        <div class="flex items-center rounded-2xl border tier-c overflow-hidden min-h-[56px]">
+                            <div class="w-12 md:w-16 h-full tier-header-c flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-emerald-500/40">C</div>
+                            <div id="result_tier_C" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
+                        </div>
+                        <div class="flex items-center rounded-2xl border tier-d overflow-hidden min-h-[56px]">
+                            <div class="w-12 md:w-16 h-full tier-header-d flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-slate-500/40">D</div>
+                            <div id="result_tier_D" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="hostNextRoundControls" class="hidden max-w-md mx-auto pt-2">
+                    <button onclick="startNextRound()" class="w-full bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white font-black text-lg py-4 rounded-2xl shadow-xl transition transform active:scale-95">
+                        次のラウンドへ ➔
+                    </button>
+                </div>
+                <p id="clientNextRoundMsg" class="hidden text-center text-xs text-purple-300/70 animate-pulse">
+                    ホストが次のラウンドを開始するのを待っています...
+                </p>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- RESULT / JUDGMENT MODAL -->
+    <div id="quickResultModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md pointer-events-none">
+        <div class="glass-panel max-w-sm w-full rounded-3xl p-6 border-2 border-amber-400 shadow-2xl text-center animate-pop space-y-4 bg-slate-950/90">
+            <div id="quickResultIcon" class="text-5xl">👑</div>
+            <div class="space-y-1">
+                <span id="quickResultSubtitle" class="text-xs font-bold text-purple-300">判定結果</span>
+                <h3 id="quickResultTitle" class="text-2xl font-black text-white">正解！</h3>
+            </div>
+            <div id="quickResultBody" class="text-xs font-bold text-purple-200"></div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION MODAL -->
+    <div id="actionNoticeModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm pointer-events-none">
+        <div class="glass-panel max-w-sm w-full rounded-3xl p-6 border-2 border-purple-400 shadow-2xl text-center animate-pop space-y-3 bg-slate-900">
+            <div id="noticeIcon" class="text-4xl">📢</div>
+            <h3 id="noticeTitle" class="text-lg font-black text-white">通知</h3>
+            <p id="noticeBody" class="text-xs font-bold text-purple-300">内容</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="p-4 text-center text-xs text-purple-300/50 border-t border-purple-500/10">
+        &copy; TIER-KING Online
+    </footer>
+
+    <!-- GAME ENGINE & PEERJS SCRIPT -->
+    <script>
+        const PREFIX = "tier-king-online-v1-";
+
+        const PLAYER_COLORS = [
+            '#f43f5e', '#3b82f6', '#10b981', '#eab308',
+            '#a855f7', '#f97316', '#06b6d4', '#ec4899'
+        ];
+
+        const TOPIC_PRESETS = [
+            { cat: "野菜の", sec: "甘い順" }, { cat: "野菜の", sec: "好き嫌いが分かれる順" }, { cat: "野菜の", sec: "値段が高い順" }, { cat: "野菜の", sec: "料理でよく使う順" }, { cat: "野菜の", sec: "腐りやすい順" },
+            { cat: "果物の", sec: "酸っぱい順" }, { cat: "果物の", sec: "高級な順" }, { cat: "果物の", sec: "皮を剥くのが面倒な順" }, { cat: "果物の", sec: "糖度が高い順" }, { cat: "果物の", sec: "水分が多い順" },
+            { cat: "居酒屋メニューの", sec: "最初に頼みたい順" }, { cat: "居酒屋メニューの", sec: "カロリーが高い順" }, { cat: "居酒屋メニューの", sec: "お酒が進む順" }, { cat: "居酒屋メニューの", sec: "提供が早い順" }, { cat: "居酒屋メニューの", sec: "定番順" },
+            { cat: "ラーメンのトッピングの", sec: "必須度が高い順" }, { cat: "ラーメンのトッピングの", sec: "こってり度順" }, { cat: "ラーメンのトッピングの", sec: "カロリーが高い順" }, { cat: "ラーメンのトッピングの", sec: "定番順" },
+            { cat: "おでんの具材の", sec: "味が染みている順" }, { cat: "おでんの具材の", sec: "人気順" }, { cat: "おでんの具材の", sec: "定番順" }, { cat: "おでんの具材の", sec: "冷めにくい順" },
+            { cat: "おにぎりの具の", sec: "定番順" }, { cat: "おにぎりの具の", sec: "高級感順" }, { cat: "おにぎりの具の", sec: "具が多い順" }, { cat: "おにぎりの具の", sec: "子供が好きな順" },
+            { cat: "寿司ネタの", sec: "値段が高い順" }, { cat: "寿司ネタの", sec: "子供が好きな順" }, { cat: "寿司ネタの", sec: "脂が乗っている順" }, { cat: "寿司ネタの", sec: "定番順" },
+            { cat: "コンビニ商品の", sec: "買ってしまう頻度順" }, { cat: "コンビニ商品の", sec: "ついで買いしてしまう順" }, { cat: "コンビニ商品の", sec: "定番順" },
+            { cat: "ファーストフードの", sec: "満足感が高い順" }, { cat: "ファーストフードの", sec: "提供が早い順" }, { cat: "ファーストフードの", sec: "カロリーが高い順" },
+            { cat: "カフェドリンクの", sec: "おしゃれ度順" }, { cat: "カフェドリンクの", sec: "甘い順" }, { cat: "カフェドリンクの", sec: "定番順" },
+            { cat: "焼肉の部位の", sec: "脂っこい順" }, { cat: "焼肉の部位の", sec: "高級な順" }, { cat: "焼肉の部位の", sec: "最初に焼く順" },
+            { cat: "中華料理の", sec: "油っこい順" }, { cat: "中華料理の", sec: "辛い順" }, { cat: "中華料理の", sec: "定番順" },
+            { cat: "洋食の", sec: "子供が好きな順" }, { cat: "洋食の", sec: "手間がかかる順" }, { cat: "洋食の", sec: "定番順" },
+            { cat: "和菓子の", sec: "甘い順" }, { cat: "和菓子の", sec: "高級感がある順" }, { cat: "和菓子の", sec: "お茶に合う順" },
+            { cat: "洋菓子の", sec: "カロリーが高い順" }, { cat: "洋菓子の", sec: "見た目が映える順" }, { cat: "洋菓子の", sec: "手土産の定番順" },
+            { cat: "パンの", sec: "満足感が高い順" }, { cat: "パンの", sec: "焼きたてが美味しい順" }, { cat: "パンの", sec: "定番順" },
+            { cat: "スープ・汁物の", sec: "温まる順" }, { cat: "スープ・汁物の", sec: "朝食に食べたい順" }, { cat: "スープ・汁物の", sec: "定番順" },
+            { cat: "丼ものの", sec: "ガッツリ度順" }, { cat: "丼ものの", sec: "定番順" }, { cat: "丼ものの", sec: "値段が高い順" },
+            { cat: "揚げ物の", sec: "重い順" }, { cat: "揚げ物の", sec: "定番順" }, { cat: "揚げ物の", sec: "お弁当に入っていて嬉しい順" },
+            { cat: "鍋料理の", sec: "冬に食べたい順" }, { cat: "鍋料理の", sec: "締めが美味しい順" }, { cat: "鍋料理の", sec: "定番順" },
+            { cat: "缶チューハイの味の", sec: "甘い順" }, { cat: "缶チューハイの味の", sec: "定番順" }, { cat: "缶チューハイの味の", sec: "飲みやすい順" },
+            { cat: "アイスフレーバーの", sec: "定番順" }, { cat: "アイスフレーバーの", sec: "甘い順" }, { cat: "アイスフレーバーの", sec: "さっぱりしている順" },
+            { cat: "休日の過ごし方の", sec: "疲れる順" }, { cat: "休日の過ごし方の", sec: "お金がかかる順" }, { cat: "休日の過ごし方の", sec: "充実感がある順" },
+            { cat: "掃除の場所の", sec: "面倒な順" }, { cat: "掃除の場所の", sec: "汚れやすい順" }, { cat: "掃除の場所の", sec: "頻繁にやる順" },
+            { cat: "家電の", sec: "買い替える頻度が低い順" }, { cat: "家電の", sec: "高価な順" }, { cat: "家電の", sec: "必須度が高い順" },
+            { cat: "家具の", sec: "場所をとる順" }, { cat: "家具の", sec: "高価な順" }, { cat: "家具の", sec: "必須度が高い順" },
+            { cat: "持ち物の", sec: "忘れると困る順" }, { cat: "持ち物の", sec: "鞄の中でかさばる順" }, { cat: "持ち物の", sec: "定番順" },
+            { cat: "ドラッグストアで買うものの", sec: "必須度が高い順" }, { cat: "ドラッグストアで買うものの", sec: "定番順" },
+            { cat: "100円ショップで買うものの", sec: "コスパが良い順" }, { cat: "100円ショップで買うものの", sec: "ついつい買う順" },
+            { cat: "朝することの", sec: "優先度が高い順" }, { cat: "朝することの", sec: "時間がかかる順" },
+            { cat: "夜することの", sec: "リラックスできる順" }, { cat: "夜することの", sec: "時間がかかる順" },
+            { cat: "日常の贅沢の", sec: "テンションが上がる順" }, { cat: "日常の贅沢の", sec: "お金がかかる順" },
+            { cat: "観光地の", sec: "行きたい順" }, { cat: "観光地の", sec: "人が多い順" }, { cat: "観光地の", sec: "費用がかかる順" },
+            { cat: "都道府県の", sec: "都会な順" }, { cat: "都道府県の", sec: "食べ物が美味しい順" }, { cat: "都道府県の", sec: "観光地が多い順" },
+            { cat: "テーマパークのアトラクションの", sec: "待ち時間が長い順" }, { cat: "テーマパークのアトラクションの", sec: "絶叫度順" }, { cat: "テーマパークのアトラクションの", sec: "定番順" },
+            { cat: "ドライブで行きたい場所の", sec: "遠い順" }, { cat: "ドライブで行きたい場所の", sec: "景色の良い順" },
+            { cat: "デートスポットの", sec: "定番順" }, { cat: "デートスポットの", sec: "緊張する順" }, { cat: "デートスポットの", sec: "おしゃれな順" },
+            { cat: "海水浴の持ち物の", sec: "必須度が高い順" }, { cat: "海水浴の持ち物の", sec: "かさばる順" },
+            { cat: "キャンプ用品の", sec: "必須度が高い順" }, { cat: "キャンプ用品の", sec: "高価な順" },
+            { cat: "新幹線での過ごし方の", sec: "時間が潰せる順" }, { cat: "新幹線での過ごし方の", sec: "定番順" },
+            { cat: "教科の", sec: "得意な人が多い順" }, { cat: "教科の", sec: "難易度が高い順" }, { cat: "教科の", sec: "好きな人が多い順" },
+            { cat: "学校行事の", sec: "盛り上がる順" }, { cat: "学校行事の", sec: "準備が大変な順" }, { cat: "学校行事の", sec: "思い出に残る順" },
+            { cat: "部活動の", sec: "ハードな順" }, { cat: "部活動の", sec: "人気順" }, { cat: "部活動の", sec: "定番順" },
+            { cat: "文房具の", sec: "使用頻度が高い順" }, { cat: "文房具の", sec: "なくしやすい順" },
+            { cat: "動物の", sec: "足が速い順" }, { cat: "動物の", sec: "強い順" }, { cat: "動物の", sec: "かわいい順" },
+            { cat: "小動物の", sec: "飼いやすい順" }, { cat: "小動物の", sec: "人気順" },
+            { cat: "海の生き物の", sec: "凶暴な順" }, { cat: "海の生き物の", sec: "水族館で人気な順" },
+            { cat: "昆虫の", sec: "カッコいい順" }, { cat: "昆虫の", sec: "捕まえるのが難しい順" },
+            { cat: "名作アニメの", sec: "泣ける順" }, { cat: "名作アニメの", sec: "有名な順" }, { cat: "ジブリ作品の", sec: "有名な順" }, { cat: "ジブリ作品の", sec: "感動する順" },
+            { cat: "ポケモンのタイプの", sec: "強い順" }, { cat: "ポケモンのタイプの", sec: "人気順" },
+            { cat: "RPGの職業の", sec: "必須度が高い順" }, { cat: "RPGの職業の", sec: "格好いい順" },
+            { cat: "職業の", sec: "憧れる順" }, { cat: "職業の", sec: "専門知識が必要な順" }, { cat: "職業の", sec: "忙しそうな順" },
+            { cat: "ビジネススキルの", sec: "重要な順" }, { cat: "ビジネススキルの", sec: "習得が難しい順" }
+        ];
+
+        let peer = null, myId = "", myName = "", roomCode = "";
+        let isHost = false;
+        let connections = {};
+        let hostConn = null;
+
+        let roomData = {
+            hostId: "",
+            status: 'LOBBY',
+            roundNumber: 1,
+            parentIndex: 0,
+            category: "",
+            secretTheme: "",
+            players: {},
+            playerOrder: [],
+            submittedWords: {},
+            tierPlacements: { S: [], A: [], B: [], C: [], D: [], UNASSIGNED: [] },
+            step: 1,
+            childGuesses: {},
+            lastResultModal: null
+        };
+
+        let soundEnabled = true;
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) audioCtx = new AudioCtx();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'tap') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(480, now);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'match') {
+                    [523.25, 659.25, 783.99].forEach((freq, i) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.type = 'sine';
+                        o.frequency.setValueAtTime(freq, now + i * 0.08);
+                        g.gain.setValueAtTime(0.12, now + i * 0.08);
+                        g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.08 + 0.2);
+                        o.start(now + i * 0.08);
+                        o.stop(now + i * 0.08 + 0.2);
+                    });
+                }
+            } catch (e) {
+                console.warn(e);
+            }
+        }
+
+        function showView(viewId) {
+            ['viewLobby', 'viewRoomLobby', 'viewGame'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+            const target = document.getElementById(viewId);
+            if (target) target.classList.remove('hidden');
+
+            const headerInfo = document.getElementById('headerInfo');
+            if (headerInfo) {
+                if (viewId !== 'viewLobby') headerInfo.classList.remove('hidden');
+                else headerInfo.classList.add('hidden');
+            }
+        }
+
+        function getPlayerName() {
+            const input = document.getElementById('playerNameInput');
+            const val = input ? input.value.trim() : '';
+            return val || 'プレイヤー' + Math.floor(Math.random() * 900 + 100);
+        }
+
+        function showNotice(icon, title, body, duration = 2000) {
+            document.getElementById('noticeIcon').innerText = icon;
+            document.getElementById('noticeTitle').innerText = title;
+            document.getElementById('noticeBody').innerText = body;
+            const modal = document.getElementById('actionNoticeModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                setTimeout(() => { modal.classList.add('hidden'); }, duration);
+            }
+        }
+
+        function showQuickResultModal(title, body, isWin = false, duration = 3000) {
+            const modal = document.getElementById('quickResultModal');
+            document.getElementById('quickResultTitle').innerText = title;
+            document.getElementById('quickResultBody').innerText = body;
+            document.getElementById('quickResultIcon').innerText = isWin ? "👑" : "💡";
+
+            if (isWin) playSound('match');
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.add('hidden'); }, duration);
+        }
+
+        window.fillRandomPresetTopic = function() {
+            playSound('tap');
+            const item = TOPIC_PRESETS[Math.floor(Math.random() * TOPIC_PRESETS.length)];
+            document.getElementById('parentCategoryInput').value = item.cat;
+            document.getElementById('parentSecretInput').value = item.sec;
+        };
+
+        function handleCreateRoom() {
+            playSound('tap');
+            myName = getPlayerName();
+            const input = document.getElementById('joinRoomCodeInput');
+            roomCode = input ? input.value.trim().toLowerCase() : '';
+
+            if (!roomCode) {
+                alert("合言葉を入力してください");
+                return;
+            }
+
+            isHost = true;
+            const peerId = `${PREFIX}${roomCode}-host`;
+            peer = new Peer(peerId);
+
+            peer.on('open', (id) => {
+                myId = id;
+                roomData.hostId = myId;
+                roomData.players = {
+                    [myId]: { id: myId, name: myName, score: 0, color: PLAYER_COLORS[0], isHost: true }
+                };
+
+                setupLobbyUI();
+                renderRoomState();
+            });
+
+            peer.on('error', (err) => {
+                if (err.type === 'unavailable-id') {
+                    alert("その合言葉はすでに使用されています。別の合言葉にしてください。");
+                } else {
+                    alert("接続エラーが発生しました: " + err.type);
+                }
+            });
+
+            peer.on('connection', (conn) => {
+                conn.on('open', () => {
+                    conn.on('data', (data) => handleHostData(conn, data));
+                });
+                conn.on('close', () => {
+                    delete connections[conn.peer];
+                    delete roomData.players[conn.peer];
+                    broadcastState();
+                });
+            });
+        }
+
+        function handleJoinRoom() {
+            playSound('tap');
+            myName = getPlayerName();
+            const input = document.getElementById('joinRoomCodeInput');
+            roomCode = input ? input.value.trim().toLowerCase() : '';
+
+            if (!roomCode) {
+                alert("合言葉を入力してください");
+                return;
+            }
+
+            isHost = false;
+            const hostPeerId = `${PREFIX}${roomCode}-host`;
+            peer = new Peer();
+
+            peer.on('open', (id) => {
+                myId = id;
+                hostConn = peer.connect(hostPeerId);
+
+                hostConn.on('open', () => {
+                    hostConn.send({ type: 'JOIN', id: myId, name: myName });
+                    setupLobbyUI();
+                });
+
+                hostConn.on('data', (data) => handleClientData(data));
+            });
+
+            peer.on('error', () => {
+                alert("部屋が見つかりませんでした。合言葉を確認してください。");
+            });
+        }
+
+        function setupLobbyUI() {
+            document.getElementById('displayRoomCode').innerText = roomCode;
+            document.getElementById('lobbyRoomCode').innerText = roomCode;
+            showView('viewRoomLobby');
+        }
+
+        function getFirstAvailableColor() {
+            const usedColors = Object.values(roomData.players).map(p => p.color);
+            return PLAYER_COLORS.find(c => !usedColors.includes(c)) || PLAYER_COLORS[0];
+        }
+
+        function broadcastState() {
+            if (!isHost) return;
+            Object.values(connections).forEach(c => c.send({ type: 'SYNC_STATE', roomData }));
+            renderRoomState();
+        }
+
+        function handleHostData(conn, data) {
+            if (data.type === 'JOIN') {
+                if (roomData.status !== 'LOBBY') {
+                    conn.send({ type: 'ERROR', message: 'ゲームはすでに進行中です' });
+                    return;
+                }
+                connections[conn.peer] = conn;
+                const assignedColor = getFirstAvailableColor();
+                roomData.players[data.id] = { id: data.id, name: data.name, score: 0, color: assignedColor, isHost: false };
+                broadcastState();
+            } else if (data.type === 'SELECT_COLOR') {
+                processSelectColor(data.playerId, data.color);
+            } else if (data.type === 'SUBMIT_PARENT_THEME') {
+                processSubmitParentTheme(data.category, data.secretTheme);
+            } else if (data.type === 'SUBMIT_WORD') {
+                processSubmitWord(data.playerId, data.word);
+            } else if (data.type === 'UPDATE_TIER') {
+                processUpdateTier(data.tierPlacements);
+            } else if (data.type === 'FINISH_TIER') {
+                processFinishTier();
+            } else if (data.type === 'SUBMIT_CHILD_GUESS') {
+                processSubmitChildGuess(data.playerId, data.guess);
+            } else if (data.type === 'JUDGE_GUESS') {
+                processJudgeGuess(data.targetPlayerId, data.isCorrect);
+            } else if (data.type === 'FINISH_ROUND_NO_WINNER') {
+                processFinishRoundWithoutWinner();
+            } else if (data.type === 'NEXT_ROUND') {
+                processStartNextRound();
+            }
+        }
+
+        function handleClientData(data) {
+            if (data.type === 'SYNC_STATE') {
+                roomData = data.roomData;
+                renderRoomState();
+            } else if (data.type === 'SHOW_RESULT_MODAL') {
+                showQuickResultModal(data.title, data.body, data.isWin, data.duration);
+            } else if (data.type === 'ERROR') {
+                alert(data.message);
+            }
+        }
+
+        window.selectMyColor = function(hexColor) {
+            playSound('tap');
+            if (isHost) {
+                processSelectColor(myId, hexColor);
+            } else {
+                hostConn.send({ type: 'SELECT_COLOR', playerId: myId, color: hexColor });
+            }
+        };
+
+        function processSelectColor(playerId, hexColor) {
+            const takenBy = Object.values(roomData.players).find(p => p.color === hexColor && p.id !== playerId);
+            if (takenBy) return;
+
+            if (roomData.players[playerId]) {
+                roomData.players[playerId].color = hexColor;
+                broadcastState();
+            }
+        }
+
+        window.startGame = function() {
+            playSound('tap');
+            if (!isHost) return;
+
+            const playerIds = Object.keys(roomData.players);
+            if (playerIds.length < 2) {
+                alert("最低2名以上のプレイヤーが必要です");
+                return;
+            }
+
+            roomData.roundNumber = 1;
+            roomData.parentIndex = 0;
+            initRound();
+        };
+
+        function initRound() {
+            const playerIds = Object.keys(roomData.players);
+            roomData.playerOrder = [...playerIds];
+            
+            roomData.category = "";
+            roomData.secretTheme = "";
+            roomData.submittedWords = {};
+            roomData.tierPlacements = { S: [], A: [], B: [], C: [], D: [], UNASSIGNED: [] };
+            roomData.step = 1;
+            roomData.childGuesses = {};
+
+            roomData.status = 'PARENT_THEME_SETUP';
+            broadcastState();
+        }
+
+        window.submitParentTheme = function() {
+            playSound('tap');
+            const cat = document.getElementById('parentCategoryInput').value.trim();
+            const sec = document.getElementById('parentSecretInput').value.trim();
+
+            if (!cat || !sec) {
+                alert("ジャンルと秘密の評価軸の両方を入力してください");
+                return;
+            }
+
+            if (isHost) {
+                processSubmitParentTheme(cat, sec);
+            } else {
+                hostConn.send({ type: 'SUBMIT_PARENT_THEME', category: cat, secretTheme: sec });
+            }
+        };
+
+        function processSubmitParentTheme(category, secretTheme) {
+            roomData.category = category;
+            roomData.secretTheme = secretTheme;
+            roomData.status = 'WORD_INPUT';
+            broadcastState();
+        }
+
+        window.submitMyWordTile = function() {
+            playSound('tap');
+            const wordInput = document.getElementById('wordTileInput');
+            const word = wordInput ? wordInput.value.trim() : '';
+            if (!word) {
+                alert("単語を入力してください");
+                return;
+            }
+
+            if (isHost) {
+                processSubmitWord(myId, word);
+            } else {
+                hostConn.send({ type: 'SUBMIT_WORD', playerId: myId, word: word });
+            }
+        };
+
+        function processSubmitWord(playerId, word) {
+            const tileKey = `${playerId}_step${roomData.step}`;
+            roomData.submittedWords[tileKey] = { word, ownerId: playerId };
+
+            const total = Object.keys(roomData.players).length;
+            const submittedCount = Object.keys(roomData.submittedWords).length;
+
+            if (submittedCount >= total * roomData.step) {
+                const unassigned = [];
+                Object.values(roomData.submittedWords).forEach(item => {
+                    unassigned.push({ word: item.word, ownerId: item.ownerId });
+                });
+                roomData.tierPlacements.UNASSIGNED = unassigned;
+                
+                ['S', 'A', 'B', 'C', 'D'].forEach(k => roomData.tierPlacements[k] = []);
+                
+                roomData.status = 'TIER_PLACEMENT';
+            }
+
+            broadcastState();
+        }
+
+        let draggedTileData = null;
+
+        window.handleDragStart = function(event, word, ownerId, fromTier) {
+            draggedTileData = { word, ownerId, fromTier };
+            event.dataTransfer.setData('text/plain', JSON.stringify(draggedTileData));
+        };
+
+        window.allowDrop = function(event) {
+            event.preventDefault();
+        };
+
+        window.dropWordTile = function(event, toTier) {
+            event.preventDefault();
+            if (!draggedTileData) return;
+
+            const { word, ownerId, fromTier } = draggedTileData;
+            if (fromTier === toTier) return;
+
+            roomData.tierPlacements[fromTier] = roomData.tierPlacements[fromTier].filter(item => !(item.word === word && item.ownerId === ownerId));
+            roomData.tierPlacements[toTier].push({ word, ownerId });
+
+            draggedTileData = null;
+
+            if (isHost) {
+                broadcastState();
+            } else {
+                hostConn.send({ type: 'UPDATE_TIER', tierPlacements: roomData.tierPlacements });
+            }
+        };
+
+        function processUpdateTier(tierPlacements) {
+            roomData.tierPlacements = tierPlacements;
+            broadcastState();
+        }
+
+        window.finishTierPlacement = function() {
+            playSound('tap');
+            if (roomData.tierPlacements.UNASSIGNED.length > 0) {
+                if (!confirm("未配置の単語が残っていますが、配置を完了して推論へ進みますか？")) return;
+            }
+
+            if (isHost) {
+                processFinishTier();
+            } else {
+                hostConn.send({ type: 'FINISH_TIER' });
+            }
+        };
+
+        function processFinishTier() {
+            roomData.status = 'GUESSING';
+            broadcastState();
+        }
+
+        window.submitChildGuess = function() {
+            playSound('tap');
+            const guessInput = document.getElementById('childGuessInput');
+            const guess = guessInput ? guessInput.value.trim() : '';
+            if (!guess) {
+                alert("評価軸（裏テーマ）の予想を入力してください");
+                return;
+            }
+
+            if (isHost) {
+                processSubmitChildGuess(myId, guess);
+            } else {
+                hostConn.send({ type: 'SUBMIT_CHILD_GUESS', playerId: myId, guess: guess });
+            }
+        };
+
+        function processSubmitChildGuess(playerId, guess) {
+            roomData.childGuesses[playerId] = guess;
+            broadcastState();
+        }
+
+        window.judgeChildGuess = function(targetPlayerId, isCorrect) {
+            playSound('tap');
+            if (isHost) {
+                processJudgeGuess(targetPlayerId, isCorrect);
+            } else {
+                hostConn.send({ type: 'JUDGE_GUESS', targetPlayerId: targetPlayerId, isCorrect: isCorrect });
+            }
+        };
+
+        function sendResultModalBroadcast(title, body, isWin) {
+            showQuickResultModal(title, body, isWin);
+            if (isHost) {
+                Object.values(connections).forEach(c => c.send({ type: 'SHOW_RESULT_MODAL', title, body, isWin, duration: 3000 }));
+            }
+        }
+
+        function processJudgeGuess(targetPlayerId, isCorrect) {
+            const targetPlayer = roomData.players[targetPlayerId];
+            const parentId = roomData.playerOrder[roomData.parentIndex];
+            const parentPlayer = roomData.players[parentId];
+
+            if (isCorrect) {
+                const stepBonus = roomData.step === 1 ? 1 : 2;
+                if (parentPlayer) parentPlayer.score += stepBonus;
+                if (targetPlayer) targetPlayer.score += 2;
+
+                sendResultModalBroadcast("正解！🎉", `${targetPlayer ? targetPlayer.name : ''} が見事見破りました！\n親 (+${stepBonus}pt) / 子 (+2pt)`, true);
+
+                roomData.status = 'ROUND_RESULT';
+            }
+
+            broadcastState();
+        }
+
+        window.finishRoundWithoutWinner = function() {
+            playSound('tap');
+            if (isHost) {
+                processFinishRoundWithoutWinner();
+            } else {
+                hostConn.send({ type: 'FINISH_ROUND_NO_WINNER' });
+            }
+        };
+
+        function processFinishRoundWithoutWinner() {
+            if (roomData.step === 1) {
+                roomData.step = 2;
+                roomData.childGuesses = {};
+                roomData.status = 'WORD_INPUT';
+                showNotice("💡", "2回目の推理チャンス", "追加の単語を記入して再チャレンジ！");
+            } else {
+                sendResultModalBroadcast("全員不正解", `正解者なし！評価軸は「${roomData.secretTheme}」でした。`, false);
+                roomData.status = 'ROUND_RESULT';
+            }
+            broadcastState();
+        }
+
+        window.startNextRound = function() {
+            playSound('tap');
+            if (isHost) {
+                processStartNextRound();
+            } else {
+                hostConn.send({ type: 'NEXT_ROUND' });
+            }
+        };
+
+        function processStartNextRound() {
+            roomData.roundNumber++;
+            roomData.parentIndex = (roomData.parentIndex + 1) % roomData.playerOrder.length;
+            initRound();
+        }
+
+        function renderRoomState() {
+            if (!roomData) return;
+
+            const isHostUser = roomData.hostId === myId;
+            const parentId = roomData.playerOrder[roomData.parentIndex] || roomData.hostId;
+            const isParent = myId === parentId;
+
+            const scoreListEl = document.getElementById('headerScoreList');
+            if (scoreListEl) {
+                scoreListEl.innerHTML = '';
+                Object.values(roomData.players).forEach(p => {
+                    const tag = document.createElement('div');
+                    tag.className = "bg-slate-900/90 px-3 py-1.5 rounded-2xl border text-xs font-black flex items-center gap-1.5 shadow";
+                    tag.style.borderColor = `${p.color}60`;
+                    tag.innerHTML = `
+                        <span class="w-2.5 h-2.5 rounded-full" style="background-color:${p.color}"></span>
+                        <span class="text-slate-100">${escapeHtml(p.name)}:</span>
+                        <span class="font-mono text-sm text-amber-300">${p.score}pt</span>
+                    `;
+                    scoreListEl.appendChild(tag);
+                });
+            }
+
+            if (roomData.status === 'LOBBY') {
+                showView('viewRoomLobby');
+
+                const startBtn = document.getElementById('startGameBtn');
+                const waitingMsg = document.getElementById('waitingForHostMsg');
+
+                if (isHostUser) {
+                    if (startBtn) startBtn.classList.remove('hidden');
+                    if (waitingMsg) waitingMsg.classList.add('hidden');
+                } else {
+                    if (startBtn) startBtn.classList.add('hidden');
+                    if (waitingMsg) waitingMsg.classList.remove('hidden');
+                }
+
+                const playerList = document.getElementById('playerList');
+                if (playerList) {
+                    playerList.innerHTML = '';
+                    const playersArray = Object.values(roomData.players);
+                    document.getElementById('playerCount').innerText = playersArray.length;
+
+                    playersArray.forEach(p => {
+                        const div = document.createElement('div');
+                        div.className = "flex items-center justify-between bg-slate-950/80 border p-3 rounded-2xl";
+                        div.style.borderColor = `${p.color}50`;
+                        div.innerHTML = `
+                            <div class="flex items-center space-x-2.5">
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white border shadow" style="background-color:${p.color}">
+                                    ${escapeHtml(p.name.charAt(0))}
+                                </div>
+                                <span class="font-bold text-sm text-slate-100">${escapeHtml(p.name)}</span>
+                            </div>
+                            ${p.isHost ? '<span class="text-[10px] font-bold bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-400/30">ホスト</span>' : ''}
+                        `;
+                        playerList.appendChild(div);
+                    });
+                }
+
+                const colorPaletteEl = document.getElementById('lobbyColorPalette');
+                if (colorPaletteEl) {
+                    colorPaletteEl.innerHTML = '';
+                    const myCurrentColor = roomData.players[myId] ? roomData.players[myId].color : '';
+                    const usedColors = Object.values(roomData.players).map(p => p.color);
+
+                    PLAYER_COLORS.forEach(hex => {
+                        const isMyColor = hex === myCurrentColor;
+                        const isTaken = usedColors.includes(hex) && !isMyColor;
+
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.onclick = () => { if (!isTaken) selectMyColor(hex); };
+                        btn.disabled = isTaken;
+                        btn.className = `w-8 h-8 rounded-full border-2 transition transform relative flex items-center justify-center ${isMyColor ? 'ring-2 ring-amber-400 scale-110 border-white' : isTaken ? 'opacity-25 cursor-not-allowed border-slate-700' : 'hover:scale-105 border-slate-500/50'}`;
+                        btn.style.backgroundColor = hex;
+
+                        if (isMyColor) btn.innerHTML = '<i class="fa-solid fa-check text-white text-xs drop-shadow"></i>';
+                        colorPaletteEl.appendChild(btn);
+                    });
+                }
+
+            } else {
+                showView('viewGame');
+
+                document.getElementById('phaseBadge').innerText = `ラウンド ${roomData.roundNumber} (${roomData.step}回目)`;
+                const parentPlayer = roomData.players[parentId];
+                document.getElementById('parentBadge').innerText = `親: ${parentPlayer ? parentPlayer.name : '--'}`;
+                
+                document.getElementById('questionTopic').innerText = roomData.category ? `「${roomData.category} 〜〜 順」` : '「親がお題を設定中」';
+
+                const secretBox = document.getElementById('secretThemeBox');
+                if (isParent && roomData.secretTheme) {
+                    secretBox.classList.remove('hidden');
+                    document.getElementById('secretThemeText').innerText = roomData.secretTheme;
+                } else {
+                    secretBox.classList.add('hidden');
+                }
+
+                ['subViewParentTheme', 'subViewParentWaiting', 'subViewWordInput', 'subViewTierBoard', 'subViewResult'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('hidden');
+                });
+
+                if (roomData.status === 'PARENT_THEME_SETUP') {
+                    if (isParent) {
+                        document.getElementById('subViewParentTheme').classList.remove('hidden');
+                    } else {
+                        document.getElementById('subViewParentWaiting').classList.remove('hidden');
+                    }
+                } else if (roomData.status === 'WORD_INPUT') {
+                    document.getElementById('subViewWordInput').classList.remove('hidden');
+                    document.getElementById('inputCategoryNotice').innerText = roomData.category;
+
+                    const myStepKey = `${myId}_step${roomData.step}`;
+                    const hasSubmitted = !!roomData.submittedWords[myStepKey];
+                    
+                    const wordInput = document.getElementById('wordTileInput');
+                    const btnSubmitWord = document.getElementById('btnSubmitWord');
+                    const wordWaitMsg = document.getElementById('wordWaitMsg');
+
+                    if (hasSubmitted) {
+                        if (wordInput) wordInput.value = '';
+                        btnSubmitWord.classList.add('hidden');
+                        wordWaitMsg.classList.remove('hidden');
+                        document.getElementById('submittedWordCount').innerText = Object.keys(roomData.submittedWords).length - (roomData.step === 2 ? Object.keys(roomData.players).length : 0);
+                        document.getElementById('totalWordCount').innerText = Object.keys(roomData.players).length;
+                    } else {
+                        btnSubmitWord.classList.remove('hidden');
+                        wordWaitMsg.classList.add('hidden');
+                    }
+                } else if (roomData.status === 'TIER_PLACEMENT' || roomData.status === 'GUESSING') {
+                    document.getElementById('subViewTierBoard').classList.remove('hidden');
+
+                    const sharedListEl = document.getElementById('sharedSubmittedWordsList');
+                    sharedListEl.innerHTML = '';
+                    Object.values(roomData.submittedWords).forEach(item => {
+                        const p = roomData.players[item.ownerId];
+                        const chip = document.createElement('div');
+                        chip.className = "px-3 py-1 bg-slate-900 rounded-xl border text-xs font-bold flex items-center gap-1.5 shadow";
+                        chip.style.borderColor = p ? `${p.color}80` : '#ccc';
+                        chip.innerHTML = `
+                            <span class="w-2 h-2 rounded-full" style="background-color:${p ? p.color : '#fff'}"></span>
+                            <span class="text-white">${escapeHtml(item.word)}</span>
+                        `;
+                        sharedListEl.appendChild(chip);
+                    });
+
+                    // Render Shared Child Guesses List
+                    const sharedGuessesListEl = document.getElementById('sharedChildGuessesList');
+                    sharedGuessesListEl.innerHTML = '';
+                    const guessesEntries = Object.entries(roomData.childGuesses);
+                    if (guessesEntries.length === 0) {
+                        sharedGuessesListEl.innerHTML = '<div class="text-xs text-slate-500 font-bold text-center py-1">まだ誰も予想を提出していません</div>';
+                    } else {
+                        guessesEntries.forEach(([cId, gText]) => {
+                            const cPlayer = roomData.players[cId];
+                            const chip = document.createElement('div');
+                            chip.className = "inline-flex items-center gap-2 bg-slate-900 border px-3 py-1.5 rounded-xl text-xs font-bold mr-2 mb-1 shadow";
+                            chip.style.borderColor = cPlayer ? `${cPlayer.color}80` : '#ccc';
+                            chip.innerHTML = `
+                                <span class="w-2 h-2 rounded-full" style="background-color:${cPlayer ? cPlayer.color : '#fff'}"></span>
+                                <span class="text-slate-300">${escapeHtml(cPlayer ? cPlayer.name : '')}:</span>
+                                <span class="text-amber-300 font-black">「${escapeHtml(gText)}」</span>
+                            `;
+                            sharedGuessesListEl.appendChild(chip);
+                        });
+                    }
+
+                    ['S', 'A', 'B', 'C', 'D', 'UNASSIGNED'].forEach(tierKey => {
+                        const container = tierKey === 'UNASSIGNED' ? document.getElementById('unassignedTileList') : document.getElementById(`tier_${tierKey}`);
+                        if (!container) return;
+                        container.innerHTML = '';
+
+                        const tiles = roomData.tierPlacements[tierKey] || [];
+                        tiles.forEach(item => {
+                            const p = roomData.players[item.ownerId];
+                            const tile = document.createElement('div');
+                            tile.draggable = isParent && roomData.status === 'TIER_PLACEMENT';
+                            tile.ondragstart = (e) => handleDragStart(e, item.word, item.ownerId, tierKey);
+                            tile.className = "word-tile bg-slate-900 border px-3 py-1.5 rounded-xl text-xs font-black shadow flex items-center gap-1.5";
+                            tile.style.borderColor = p ? p.color : '#fff';
+                            tile.innerHTML = `
+                                <span class="w-2 h-2 rounded-full" style="background-color:${p ? p.color : '#fff'}"></span>
+                                <span class="text-white">${escapeHtml(item.word)}</span>
+                            `;
+                            container.appendChild(tile);
+                        });
+                    });
+
+                    const unassignedBox = document.getElementById('unassignedPoolBox');
+                    const tierInst = document.getElementById('tierInstructionText');
+
+                    if (roomData.status === 'TIER_PLACEMENT') {
+                        if (isParent) {
+                            unassignedBox.classList.remove('hidden');
+                            tierInst.innerText = "単語タイルをドラッグしてTier行に配置してください。";
+                        } else {
+                            unassignedBox.classList.add('hidden');
+                            tierInst.innerText = "親がTier表に単語を配置しています...";
+                        }
+                    } else if (roomData.status === 'GUESSING') {
+                        unassignedBox.classList.add('hidden');
+                        tierInst.innerText = "Tier表の位置関係から評価軸（裏テーマ）を推測！";
+
+                        const childArea = document.getElementById('childGuessArea');
+                        const parentArea = document.getElementById('parentJudgeArea');
+
+                        if (isParent) {
+                            childArea.classList.add('hidden');
+                            parentArea.classList.remove('hidden');
+
+                            const judgeList = document.getElementById('parentJudgeList');
+                            judgeList.innerHTML = '';
+                            
+                            const guesses = Object.entries(roomData.childGuesses);
+                            if (guesses.length === 0) {
+                                judgeList.innerHTML = '<div class="text-xs text-slate-400 text-center py-2">子の提出待ち...</div>';
+                            } else {
+                                guesses.forEach(([cId, gText]) => {
+                                    const cPlayer = roomData.players[cId];
+                                    const row = document.createElement('div');
+                                    row.className = "flex justify-between items-center bg-slate-900 p-2.5 rounded-xl border border-purple-500/20";
+                                    row.innerHTML = `
+                                        <div>
+                                            <span class="text-xs font-bold text-amber-300">${escapeHtml(cPlayer ? cPlayer.name : '')}:</span>
+                                            <span class="text-sm font-black text-white ml-2">「${escapeHtml(gText)}」</span>
+                                        </div>
+                                        <div>
+                                            <button onclick="judgeChildGuess('${cId}', true)" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-4 py-1.5 rounded-lg text-xs shadow">正解 ◯</button>
+                                        </div>
+                                    `;
+                                    judgeList.appendChild(row);
+                                });
+                            }
+                        } else {
+                            parentArea.classList.add('hidden');
+                            if (roomData.childGuesses[myId]) {
+                                childArea.classList.add('hidden');
+                            } else {
+                                childArea.classList.remove('hidden');
+                            }
+                        }
+                    }
+
+                } else if (roomData.status === 'ROUND_RESULT') {
+                    document.getElementById('subViewResult').classList.remove('hidden');
+                    document.getElementById('resultSecretText').innerText = `正解の評価軸: 「${roomData.secretTheme}」`;
+
+                    // 結果発表画面でのTier表レンダリング
+                    ['S', 'A', 'B', 'C', 'D'].forEach(tierKey => {
+                        const container = document.getElementById(`result_tier_${tierKey}`);
+                        if (!container) return;
+                        container.innerHTML = '';
+
+                        const tiles = roomData.tierPlacements[tierKey] || [];
+                        tiles.forEach(item => {
+                            const p = roomData.players[item.ownerId];
+                            const tile = document.createElement('div');
+                            tile.className = "bg-slate-900 border px-3 py-1.5 rounded-xl text-xs font-black shadow flex items-center gap-1.5";
+                            tile.style.borderColor = p ? p.color : '#fff';
+                            tile.innerHTML = `
+                                <span class="w-2 h-2 rounded-full" style="background-color:${p ? p.color : '#fff'}"></span>
+                                <span class="text-white">${escapeHtml(item.word)}</span>
+                            `;
+                            container.appendChild(tile);
+                        });
+                    });
+
+                    const hostNext = document.getElementById('hostNextRoundControls');
+                    const clientNext = document.getElementById('clientNextRoundMsg');
+
+                    if (isHostUser) {
+                        hostNext.classList.remove('hidden');
+                        clientNext.classList.add('hidden');
+                    } else {
+                        hostNext.classList.add('hidden');
+                        clientNext.classList.remove('hidden');
+                    }
+                }
+            }
+        }
+
+        window.toggleSound = function() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            if (icon) {
+                if (soundEnabled) icon.className = "fa-solid fa-volume-high";
+                else icon.className = "fa-solid fa-volume-xmark text-rose-400";
+            }
+        };
+
+        window.copyRoomCode = function() {
+            if (!roomCode) return;
+            navigator.clipboard.writeText(roomCode);
+            showNotice("📋", "コピー完了", `合言葉 [ ${roomCode} ] をコピーしました！`, 1500);
+        };
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnCreate = document.getElementById('btnCreateRoom');
+            const btnJoin = document.getElementById('btnJoinRoom');
+
+            if (btnCreate) btnCreate.addEventListener('click', handleCreateRoom);
+            if (btnJoin) btnJoin.addEventListener('click', handleJoinRoom);
+        });
+    </script>
+</body>
+</html>
