@@ -12,8 +12,9 @@
             theme: {
                 extend: {
                     colors: {
-                        polarDark: '#0b1329',
-                        polarGlass: 'rgba(15, 23, 42, 0.85)',
+                        tkDark: '#09090b',
+                        tkCard: '#18181b',
+                        tkGold: '#fbbf24',
                     }
                 }
             }
@@ -26,45 +27,43 @@
     <!-- PeerJS for P2P Online -->
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Zen+Maru+Gothic:wght@500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;900&family=Zen+Maru+Gothic:wght@500;700;900&display=swap');
         
         body {
             font-family: 'Zen Maru Gothic', 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(135deg, #0b1329 0%, #1e1b4b 50%, #2a083b 100%);
-            color: #f0f9ff;
+            background: #09090b;
+            color: #f4f4f5;
             user-select: none;
             touch-action: manipulation;
             min-height: 100vh;
         }
 
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(168, 85, 247, 0.25);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+        .tier-card {
+            background: #18181b;
+            border: 1px solid #27272a;
+            box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.8);
         }
 
         @keyframes fadeInScale {
-            0% { opacity: 0; transform: scale(0.85); }
+            0% { opacity: 0; transform: scale(0.9); }
             100% { opacity: 1; transform: scale(1); }
         }
         .animate-pop {
-            animation: fadeInScale 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeInScale 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         /* Tier Row Colors */
-        .tier-s { background: linear-gradient(90deg, rgba(239, 68, 68, 0.3) 0%, rgba(245, 158, 11, 0.2) 100%); border-color: #f59e0b; }
-        .tier-a { background: linear-gradient(90deg, rgba(168, 85, 247, 0.3) 0%, rgba(217, 70, 239, 0.2) 100%); border-color: #a855f7; }
-        .tier-b { background: linear-gradient(90deg, rgba(59, 130, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%); border-color: #3b82f6; }
-        .tier-c { background: linear-gradient(90deg, rgba(16, 185, 129, 0.3) 0%, rgba(34, 197, 94, 0.2) 100%); border-color: #10b981; }
-        .tier-d { background: linear-gradient(90deg, rgba(100, 116, 139, 0.3) 0%, rgba(71, 85, 105, 0.2) 100%); border-color: #64748b; }
+        .tier-row-s { background: rgba(239, 68, 68, 0.3); border-color: #ef4444; }
+        .tier-row-a { background: rgba(249, 115, 22, 0.3); border-color: #f97316; }
+        .tier-row-b { background: rgba(234, 179, 8, 0.3); border-color: #eab308; }
+        .tier-row-c { background: rgba(34, 197, 94, 0.3); border-color: #22c55e; }
+        .tier-row-d { background: rgba(59, 130, 246, 0.3); border-color: #3b82f6; }
 
         .tier-header-s { background: #ef4444; color: #ffffff; }
-        .tier-header-a { background: #a855f7; color: #ffffff; }
-        .tier-header-b { background: #3b82f6; color: #ffffff; }
-        .tier-header-c { background: #10b981; color: #ffffff; }
-        .tier-header-d { background: #64748b; color: #ffffff; }
+        .tier-header-a { background: #f97316; color: #ffffff; }
+        .tier-header-b { background: #eab308; color: #000000; }
+        .tier-header-c { background: #22c55e; color: #ffffff; }
+        .tier-header-d { background: #3b82f6; color: #ffffff; }
 
         .word-tile {
             cursor: grab;
@@ -76,28 +75,28 @@
         }
     </style>
 </head>
-<body class="min-h-screen text-slate-100 flex flex-col justify-between overflow-x-hidden">
+<body class="min-h-screen text-zinc-100 flex flex-col justify-between overflow-x-hidden">
 
     <!-- Header / Navbar -->
-    <header class="w-full p-4 md:p-5 glass-panel sticky top-0 z-40 border-b border-purple-500/20 flex justify-between items-center">
+    <header class="w-full p-4 md:p-5 tier-card sticky top-0 z-40 border-b border-zinc-800 flex justify-between items-center">
         <div class="flex items-center space-x-3 cursor-pointer" onclick="location.reload()">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-400 via-purple-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-500/30 border border-amber-200/40">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center shadow-lg shadow-amber-500/20 border border-amber-400/40">
                 <span class="text-3xl">👑</span>
             </div>
             <div>
-                <h1 class="font-black text-xl md:text-2xl tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-purple-200 to-indigo-300">
-                    TIER-KING Online
+                <h1 class="font-black text-xl md:text-2xl tracking-wider text-amber-400">
+                    TIER-KING
                 </h1>
-                <p class="text-[10px] md:text-xs text-purple-300/70 font-mono tracking-widest uppercase">ティア・キング オンライン</p>
+                <p class="text-[10px] md:text-xs text-zinc-400 font-mono tracking-widest uppercase">ティアキング オンライン</p>
             </div>
         </div>
 
         <div id="headerInfo" class="hidden flex items-center space-x-3">
-            <div id="roomBadge" class="bg-slate-900/90 border border-purple-500/30 px-3.5 py-1.5 rounded-full text-xs md:text-sm font-mono font-bold text-purple-300 flex items-center gap-2 cursor-pointer hover:bg-slate-800 transition" onclick="copyRoomCode()">
+            <div id="roomBadge" class="bg-zinc-900 border border-zinc-700 px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-mono font-bold text-amber-400 flex items-center gap-2 cursor-pointer hover:bg-zinc-800 transition" onclick="copyRoomCode()">
                 <i class="fa-regular fa-copy"></i>
                 <span id="displayRoomCode">----</span>
             </div>
-            <button id="soundToggleBtn" onclick="toggleSound()" class="w-10 h-10 rounded-full bg-slate-800/80 hover:bg-slate-700 border border-purple-500/30 flex items-center justify-center text-purple-300 text-base transition">
+            <button id="soundToggleBtn" onclick="toggleSound()" class="w-10 h-10 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 flex items-center justify-center text-amber-400 text-base transition">
                 <i class="fa-solid fa-volume-high" id="soundIcon"></i>
             </button>
         </div>
@@ -109,49 +108,49 @@
         <!-- VIEW 1: LOBBY ENTRY -->
         <div id="viewLobby" class="space-y-6 max-w-2xl mx-auto w-full">
             <div class="text-center space-y-3 my-2">
-                <div class="inline-block px-4 py-1.5 bg-amber-500/20 text-amber-300 rounded-full text-xs md:text-sm font-bold border border-amber-400/30 shadow-lg backdrop-blur-md">
+                <div class="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-400 rounded-full text-xs md:text-sm font-bold border border-amber-500/30 shadow-lg">
                     価値観推理パーティゲーム 👑
                 </div>
-                <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight">TIER-KING Online</h2>
-                <p class="text-purple-200/80 text-xs md:text-sm max-w-lg mx-auto leading-relaxed">
-                    親が秘かに設定した「評価軸（裏テーマ）」を、Tier表上の単語の位置関係から見破れ！
+                <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight">TIER-KING</h2>
+                <p class="text-zinc-400 text-xs md:text-sm max-w-lg mx-auto leading-relaxed">
+                    親が秘密裏に設定した「評価軸（裏テーマ）」を、Tier表の並びから看破せよ！
                 </p>
             </div>
 
-            <div class="glass-panel rounded-3xl p-6 shadow-2xl space-y-3">
-                <label class="block text-xs font-bold uppercase tracking-wider text-purple-200">プレイヤー名（ニックネーム）</label>
+            <div class="tier-card rounded-2xl p-6 shadow-2xl space-y-3">
+                <label class="block text-xs font-bold uppercase tracking-wider text-amber-400">プレイヤー名（ニックネーム）</label>
                 <input type="text" id="playerNameInput" maxlength="10" placeholder="名前を入力してください" 
-                    class="w-full bg-slate-950/80 border border-purple-500/40 rounded-2xl px-5 py-3.5 text-white focus:outline-none focus:border-amber-400 transition font-bold text-lg placeholder-slate-600">
+                    class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-5 py-3.5 text-white focus:outline-none focus:border-amber-400 transition font-bold text-lg placeholder-zinc-600">
             </div>
 
-            <div class="glass-panel rounded-3xl p-6 shadow-2xl space-y-3">
-                <label class="block text-xs font-bold uppercase tracking-wider text-purple-200">部屋の合言葉（部屋コード）</label>
+            <div class="tier-card rounded-2xl p-6 shadow-2xl space-y-3">
+                <label class="block text-xs font-bold uppercase tracking-wider text-amber-400">部屋の合言葉（部屋コード）</label>
                 <input type="text" id="joinRoomCodeInput" placeholder="例: tierroom1" 
-                    class="w-full bg-slate-950/80 border border-purple-500/40 rounded-2xl px-5 py-3.5 text-white font-mono tracking-widest text-lg focus:outline-none focus:border-amber-400 transition placeholder-slate-600">
-                <p class="text-xs text-purple-300/60">全員で同じ合言葉を入力してください (3〜6人推奨)</p>
+                    class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-5 py-3.5 text-white font-mono tracking-widest text-lg focus:outline-none focus:border-amber-400 transition placeholder-zinc-600">
+                <p class="text-xs text-zinc-500">全員で同じ合言葉を入力してください (3〜6人推奨)</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="glass-panel rounded-3xl p-6 shadow-2xl hover:border-amber-400/60 transition flex flex-col justify-between space-y-4">
+                <div class="tier-card rounded-2xl p-6 shadow-2xl hover:border-amber-400/50 transition flex flex-col justify-between space-y-4">
                     <div>
-                        <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-300 flex items-center justify-center text-2xl mb-2 border border-amber-400/30">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-2xl mb-2 border border-amber-500/30">
                             <i class="fa-solid fa-crown"></i>
                         </div>
                         <h3 class="font-bold text-lg text-white">部屋を作る (ホスト)</h3>
                     </div>
-                    <button id="btnCreateRoom" class="w-full bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white font-black text-lg py-3.5 rounded-2xl shadow-lg shadow-amber-500/20 transition transform active:scale-95">
+                    <button id="btnCreateRoom" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black text-lg py-3.5 rounded-xl shadow-lg shadow-amber-500/20 transition transform active:scale-95">
                         部屋を作成
                     </button>
                 </div>
 
-                <div class="glass-panel rounded-3xl p-6 shadow-2xl hover:border-indigo-400/60 transition flex flex-col justify-between space-y-4">
+                <div class="tier-card rounded-2xl p-6 shadow-2xl hover:border-zinc-500 transition flex flex-col justify-between space-y-4">
                     <div>
-                        <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-2xl mb-2 border border-indigo-400/30">
+                        <div class="w-12 h-12 rounded-2xl bg-zinc-800 text-zinc-300 flex items-center justify-center text-2xl mb-2 border border-zinc-700">
                             <i class="fa-solid fa-right-to-bracket"></i>
                         </div>
                         <h3 class="font-bold text-lg text-white">部屋に入る (ゲスト)</h3>
                     </div>
-                    <button id="btnJoinRoom" class="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-amber-600 hover:from-indigo-400 hover:to-indigo-500 text-white font-black text-lg py-3.5 rounded-2xl shadow-lg shadow-indigo-500/20 transition transform active:scale-95">
+                    <button id="btnJoinRoom" class="w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-100 font-black text-lg py-3.5 rounded-xl border border-zinc-600 transition transform active:scale-95">
                         部屋に参加
                     </button>
                 </div>
@@ -160,51 +159,60 @@
 
         <!-- VIEW 2: ROOM LOBBY -->
         <div id="viewRoomLobby" class="hidden space-y-5 max-w-2xl mx-auto w-full">
-            <div class="glass-panel rounded-3xl p-6 md:p-8 shadow-2xl space-y-6">
-                <div class="flex justify-between items-center border-b border-purple-500/20 pb-4">
+            <div class="tier-card rounded-2xl p-6 md:p-8 shadow-2xl space-y-6">
+                <div class="flex justify-between items-center border-b border-zinc-800 pb-4">
                     <div>
-                        <span class="text-xs font-bold text-purple-400 tracking-wider uppercase">ROOM LOBBY</span>
+                        <span class="text-xs font-bold text-amber-400 tracking-wider uppercase">ROOM LOBBY</span>
                         <h2 class="text-2xl md:text-3xl font-black text-white flex items-center gap-2">
-                            合言葉: <span id="lobbyRoomCode" class="font-mono text-amber-300">----</span>
+                            合言葉: <span id="lobbyRoomCode" class="font-mono text-amber-400">----</span>
                         </h2>
                     </div>
-                    <button onclick="copyRoomCode()" class="bg-slate-800/80 hover:bg-slate-700 text-purple-300 text-xs md:text-sm font-bold px-4 py-2 rounded-2xl border border-purple-500/30 flex items-center gap-2 transition">
+                    <button onclick="copyRoomCode()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs md:text-sm font-bold px-4 py-2 rounded-xl border border-zinc-600 flex items-center gap-2 transition">
                         <i class="fa-regular fa-copy"></i> コピー
                     </button>
                 </div>
 
                 <!-- Player Avatar Color Selector -->
-                <div class="bg-slate-950/80 rounded-2xl p-4 border border-purple-500/30 space-y-2">
+                <div class="bg-zinc-950 rounded-xl p-4 border border-zinc-800 space-y-2">
                     <div class="flex justify-between items-center">
-                        <label class="block text-xs font-bold text-purple-200 uppercase tracking-wider">マイカラー選択</label>
-                        <span class="text-[11px] text-purple-300/70">他プレイヤーと重複不可</span>
+                        <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider">マイカラー選択</label>
+                        <span class="text-[11px] text-zinc-500">他プレイヤーと重複不可</span>
                     </div>
                     <div id="lobbyColorPalette" class="flex flex-wrap gap-2.5 pt-1"></div>
                 </div>
 
-                <!-- Game Outline -->
-                <div class="bg-slate-950/60 rounded-2xl p-4 border border-purple-500/20 text-xs md:text-sm text-purple-100 space-y-1.5 leading-relaxed">
-                    <div class="font-bold text-amber-300">【ゲームの流れ】</div>
-                    <div>1. <b>親の決定</b>：毎ラウンド1名が親になり、隠された「評価軸（裏テーマ）」を設定します。</div>
-                    <div>2. <b>単語の提出</b>：全員がお題（ジャンル）に合った単語を記入して提出します（提出単語は全員に一覧公開されます）。</div>
-                    <div>3. <b>Tier配置</b>：親が単語タイルをTier表（S〜D）に配置します。</div>
-                    <div>4. <b>推理</b>：子は親の裏テーマを推測して解答！他の人の提出予想もリアルタイム表示されます。</div>
+                <!-- Game Settings: Laps/Rounds Configurable by Host -->
+                <div class="bg-zinc-950 rounded-xl p-4 border border-zinc-800 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider">ゲーム設定（周回数）</label>
+                        <span id="settingsRoleNotice" class="text-[11px] text-zinc-400">ホストのみ変更可能</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-1">
+                        <span class="text-xs text-zinc-300 font-bold">全員が親をやる回数 (周):</span>
+                        <select id="lapCountSelect" onchange="changeLapSetting()" class="bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2 text-sm font-bold text-amber-400 focus:outline-none focus:border-amber-400">
+                            <option value="1">1周 (サクッと)</option>
+                            <option value="2" selected>2周 (標準)</option>
+                            <option value="3">3周 (たっぷり)</option>
+                            <option value="4">4周 (ガッツリ)</option>
+                            <option value="5">5周 (耐久)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Player List -->
                 <div class="space-y-3">
-                    <div class="flex justify-between items-center text-xs font-bold text-purple-200">
+                    <div class="flex justify-between items-center text-xs font-bold text-zinc-400">
                         <span>参加プレイヤー (<span id="playerCount">0</span>名)</span>
-                        <span class="text-purple-400/70">3名以上を推奨</span>
+                        <span class="text-zinc-500">3名以上推奨</span>
                     </div>
-                    <div id="playerList" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-1"></div>
+                    <div id="playerList" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-50 overflow-y-auto pr-1"></div>
                 </div>
 
                 <div class="pt-2">
-                    <button id="startGameBtn" onclick="startGame()" class="hidden w-full bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 hover:from-amber-400 hover:to-indigo-400 text-white font-black text-lg py-4 rounded-2xl shadow-xl shadow-amber-500/30 transition transform active:scale-95">
+                    <button id="startGameBtn" onclick="startGame()" class="hidden w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black text-lg py-4 rounded-xl shadow-xl shadow-amber-500/20 transition transform active:scale-95">
                         ゲームを開始する 🚀
                     </button>
-                    <p id="waitingForHostMsg" class="text-center text-purple-300/70 text-xs font-medium animate-pulse">
+                    <p id="waitingForHostMsg" class="text-center text-zinc-500 text-xs font-medium animate-pulse">
                         ホストがゲームを開始するのを待っています...
                     </p>
                 </div>
@@ -215,81 +223,81 @@
         <div id="viewGame" class="hidden space-y-5 w-full max-w-4xl mx-auto relative">
             
             <!-- Game Header Status & Score Board -->
-            <div class="glass-panel p-4 rounded-3xl border border-purple-500/20 space-y-3">
+            <div class="tier-card p-4 rounded-2xl border border-zinc-800 space-y-3">
                 <div class="flex flex-wrap justify-between items-center gap-3">
                     <div class="flex items-center space-x-3">
-                        <div id="phaseBadge" class="bg-amber-500/20 text-amber-300 px-3.5 py-1.5 rounded-2xl border border-amber-400/40 text-xs font-mono font-bold shadow">
+                        <div id="phaseBadge" class="bg-amber-500/10 text-amber-400 px-3.5 py-1.5 rounded-xl border border-amber-500/30 text-xs font-mono font-bold shadow">
                             ラウンド 1
                         </div>
-                        <div id="parentBadge" class="bg-purple-500/20 text-purple-300 px-3.5 py-1.5 rounded-2xl border border-purple-400/40 text-xs font-bold">
+                        <div id="parentBadge" class="bg-zinc-800 text-zinc-300 px-3.5 py-1.5 rounded-xl border border-zinc-700 text-xs font-bold">
                             親: --
                         </div>
                     </div>
                 </div>
 
                 <!-- Header Score Board -->
-                <div class="border-t border-purple-500/20 pt-2.5">
-                    <div class="text-[10px] font-bold text-purple-300 uppercase tracking-wider mb-1.5">得点表</div>
+                <div class="border-t border-zinc-800 pt-2.5">
+                    <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">得点表</div>
                     <div id="headerScoreList" class="flex flex-wrap gap-2"></div>
                 </div>
             </div>
 
             <!-- Topic Banner -->
-            <div id="topicCard" class="glass-panel rounded-3xl p-5 text-center shadow-2xl border border-purple-500/30 bg-slate-950/80 space-y-2">
-                <span id="topicCategoryBadge" class="inline-block px-3 py-1 bg-purple-500/20 text-purple-300 border border-purple-400/30 rounded-full text-xs font-bold">
+            <div id="topicCard" class="tier-card rounded-2xl p-5 text-center shadow-2xl border border-zinc-800 bg-zinc-950 space-y-2">
+                <span id="topicCategoryBadge" class="inline-block px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-xs font-bold">
                     公開ジャンル
                 </span>
                 <h2 id="questionTopic" class="text-2xl md:text-4xl font-black text-white">「------」</h2>
-                <div id="secretThemeBox" class="hidden pt-2 text-xs font-bold text-amber-300 bg-amber-500/10 py-1.5 px-3 rounded-xl border border-amber-400/30 inline-block">
+                <div id="secretThemeBox" class="hidden pt-2 text-xs font-bold text-amber-400 bg-amber-500/10 py-1.5 px-3 rounded-xl border border-amber-500/30 inline-block">
                     🔒 親用・秘密の裏テーマ: <span id="secretThemeText">--</span>
                 </div>
             </div>
 
             <!-- PHASE 1: PARENT THEME SETUP (Host/Parent) -->
-            <div id="subViewParentTheme" class="hidden glass-panel p-6 rounded-3xl border border-purple-500/30 space-y-4 max-w-xl mx-auto">
+            <div id="subViewParentTheme" class="hidden tier-card p-6 rounded-2xl border border-zinc-800 space-y-4 max-w-xl mx-auto">
                 <div class="text-center space-y-1">
-                    <h3 class="text-xl font-black text-white">あなたが今回の「親」です！</h3>
-                    <p class="text-xs text-purple-200/80">ジャンルに沿った隠された評価軸（裏テーマ）を設定してください。</p>
+                    <h3 class="text-xl font-black text-amber-400">あなたが今回の「親」です！</h3>
+                    <p class="text-xs text-zinc-400">ジャンルに沿った隠された評価軸（裏テーマ）を設定してください。</p>
                 </div>
                 
                 <div class="flex justify-end">
-                    <button onclick="fillRandomPresetTopic()" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/40 px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <button onclick="fillRandomPresetTopic()" class="bg-zinc-800 hover:bg-zinc-700 text-amber-400 border border-zinc-600 px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
                         <i class="fa-solid fa-dice"></i> ランダムでお題を選ぶ (全200種+)
                     </button>
                 </div>
 
                 <div class="space-y-3">
                     <div>
-                        <label class="block text-xs font-bold text-purple-200 mb-1">公開ジャンル</label>
-                        <input type="text" id="parentCategoryInput" placeholder="例: 野菜の" class="w-full bg-slate-950 border border-purple-500/40 rounded-xl px-4 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
+                        <label class="block text-xs font-bold text-zinc-400 mb-1">公開ジャンル</label>
+                        <input type="text" id="parentCategoryInput" placeholder="例: 野菜の" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-300 mb-1">秘密の評価軸（裏テーマ） 子には隠されます</label>
-                        <input type="text" id="parentSecretInput" placeholder="例: 甘さ順" class="w-full bg-slate-950 border border-amber-500/50 rounded-xl px-4 py-2.5 text-sm font-bold text-amber-300 focus:outline-none focus:border-amber-400">
+                        <label class="block text-xs font-bold text-amber-400 mb-1">秘密の評価軸（裏テーマ） 子には隠されます</label>
+                        <input type="text" id="parentSecretInput" placeholder="例: 甘さ順" class="w-full bg-zinc-950 border border-amber-500/50 rounded-xl px-4 py-2.5 text-sm font-bold text-amber-400 focus:outline-none focus:border-amber-400">
                     </div>
-                    <button onclick="submitParentTheme()" class="w-full bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white font-black text-base py-3.5 rounded-2xl shadow-lg transition transform active:scale-95">
+                    <button onclick="submitParentTheme()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black text-base py-3.5 rounded-xl shadow-lg transition transform active:scale-95">
                         お題と裏テーマを決定する ➔
                     </button>
                 </div>
             </div>
 
-            <div id="subViewParentWaiting" class="hidden text-center py-8 glass-panel rounded-3xl p-6">
-                <i class="fa-solid fa-spinner fa-spin text-3xl text-amber-300 mb-3"></i>
-                <p class="text-sm font-bold text-purple-200">親が裏テーマを設定しています...</p>
+            <div id="subViewParentWaiting" class="hidden text-center py-8 tier-card rounded-2xl p-6">
+                <i class="fa-solid fa-spinner fa-spin text-3xl text-amber-400 mb-3"></i>
+                <p class="text-sm font-bold text-zinc-300">親が裏テーマを設定しています...</p>
             </div>
 
             <!-- PHASE 2: WORD INPUT -->
-            <div id="subViewWordInput" class="hidden glass-panel p-6 rounded-3xl border border-purple-500/30 space-y-4 max-w-xl mx-auto">
+            <div id="subViewWordInput" class="hidden tier-card p-6 rounded-2xl border border-zinc-800 space-y-4 max-w-xl mx-auto">
                 <div class="text-center space-y-1">
                     <h3 class="text-xl font-black text-white">単語タイルを1つ記入してください</h3>
-                    <p class="text-xs text-purple-200/80">ジャンル「<span id="inputCategoryNotice" class="text-amber-300 font-bold">--</span>」に当てはまる単語を入力！</p>
+                    <p class="text-xs text-zinc-400">ジャンル「<span id="inputCategoryNotice" class="text-amber-400 font-bold">--</span>」に当てはまる単語を入力！</p>
                 </div>
                 <div class="space-y-3">
-                    <input type="text" id="wordTileInput" maxlength="15" placeholder="単語を入力 (例: トマト)" class="w-full bg-slate-950 border border-purple-500/40 rounded-xl px-4 py-3 text-base font-bold text-white focus:outline-none focus:border-amber-400">
-                    <button id="btnSubmitWord" onclick="submitMyWordTile()" class="w-full bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white font-black text-base py-3.5 rounded-2xl shadow-lg transition transform active:scale-95">
+                    <input type="text" id="wordTileInput" maxlength="15" placeholder="単語を入力 (例: トマト)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-base font-bold text-white focus:outline-none focus:border-amber-400">
+                    <button id="btnSubmitWord" onclick="submitMyWordTile()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black text-base py-3.5 rounded-xl shadow-lg transition transform active:scale-95">
                         単語を提出する ➔
                     </button>
-                    <p id="wordWaitMsg" class="hidden text-xs text-center text-purple-300/80 font-bold animate-pulse">
+                    <p id="wordWaitMsg" class="hidden text-xs text-center text-zinc-400 font-bold animate-pulse">
                         全員の提出を待っています... (<span id="submittedWordCount">0</span>/<span id="totalWordCount">0</span>)
                     </p>
                 </div>
@@ -299,65 +307,65 @@
             <div id="subViewTierBoard" class="hidden space-y-5">
                 
                 <!-- Shared All Submitted Words Banner -->
-                <div class="glass-panel p-4 rounded-3xl border border-purple-500/20 space-y-2">
-                    <div class="flex justify-between items-center text-xs font-bold text-purple-200">
+                <div class="tier-card p-4 rounded-2xl border border-zinc-800 space-y-2">
+                    <div class="flex justify-between items-center text-xs font-bold text-zinc-400">
                         <span>提出された単語一覧（全員共有）</span>
-                        <span class="text-purple-400/80 text-[11px]">被りや候補の参考にしてください</span>
+                        <span class="text-zinc-500 text-[11px]">被りや候補の参考にしてください</span>
                     </div>
                     <div id="sharedSubmittedWordsList" class="flex flex-wrap gap-2 pt-1"></div>
                 </div>
 
                 <!-- Interactive Tier Table -->
-                <div class="glass-panel p-5 rounded-3xl border border-purple-500/30 space-y-3">
-                    <div class="flex justify-between items-center border-b border-purple-500/20 pb-2">
-                        <h3 class="text-base font-black text-white flex items-center gap-2">
-                            <i class="fa-solid fa-layer-group text-amber-300"></i> Ranking Tier Board
+                <div class="tier-card p-5 rounded-2xl border border-zinc-800 space-y-3">
+                    <div class="flex justify-between items-center border-b border-zinc-800 pb-2">
+                        <h3 class="text-base font-black text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group text-amber-400"></i> Ranking Tier Board
                         </h3>
-                        <span id="tierInstructionText" class="text-xs text-purple-300/90 font-bold"></span>
+                        <span id="tierInstructionText" class="text-xs text-zinc-400 font-bold"></span>
                     </div>
 
                     <div class="space-y-2 font-bold text-sm">
                         <!-- Tier S -->
-                        <div class="flex items-center rounded-2xl border tier-s overflow-hidden min-h-[56px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'S')">
-                            <div class="w-12 md:w-16 h-full tier-header-s flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-amber-500/40">S</div>
+                        <div class="flex items-center rounded-xl border tier-row-s overflow-hidden min-h-[56px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'S')">
+                            <div class="w-12 md:w-16 h-full tier-header-s flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-red-600/50">S</div>
                             <div id="tier_S" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
                         </div>
                         <!-- Tier A -->
-                        <div class="flex items-center rounded-2xl border tier-a overflow-hidden min-h-[56px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'A')">
-                            <div class="w-12 md:w-16 h-full tier-header-a flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-purple-500/40">A</div>
+                        <div class="flex items-center rounded-xl border tier-row-a overflow-hidden min-h-[56px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'A')">
+                            <div class="w-12 md:w-16 h-full tier-header-a flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-orange-600/50">A</div>
                             <div id="tier_A" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
                         </div>
                         <!-- Tier B -->
-                        <div class="flex items-center rounded-2xl border tier-b overflow-hidden min-h-[56px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'B')">
-                            <div class="w-12 md:w-16 h-full tier-header-b flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-blue-500/40">B</div>
+                        <div class="flex items-center rounded-xl border tier-row-b overflow-hidden min-h-[56px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'B')">
+                            <div class="w-12 md:w-16 h-full tier-header-b flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-yellow-600/50">B</div>
                             <div id="tier_B" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
                         </div>
                         <!-- Tier C -->
-                        <div class="flex items-center rounded-2xl border tier-c overflow-hidden min-h-[56px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'C')">
-                            <div class="w-12 md:w-16 h-full tier-header-c flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-emerald-500/40">C</div>
+                        <div class="flex items-center rounded-xl border tier-row-c overflow-hidden min-h-[56px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'C')">
+                            <div class="w-12 md:w-16 h-full tier-header-c flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-green-600/50">C</div>
                             <div id="tier_C" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
                         </div>
                         <!-- Tier D -->
-                        <div class="flex items-center rounded-2xl border tier-d overflow-hidden min-h-[56px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'D')">
-                            <div class="w-12 md:w-16 h-full tier-header-d flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-slate-500/40">D</div>
+                        <div class="flex items-center rounded-xl border tier-row-d overflow-hidden min-h-[56px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'D')">
+                            <div class="w-12 md:w-16 h-full tier-header-d flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-blue-600/50">D</div>
                             <div id="tier_D" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
                         </div>
                     </div>
 
                     <!-- Unassigned Pool for Parent Placement -->
-                    <div id="unassignedPoolBox" class="hidden bg-slate-950/80 p-3.5 rounded-2xl border border-purple-500/30 space-y-2">
-                        <div class="text-xs font-bold text-amber-300">未配置の単語 ドラッグまたはタップでTier行へ配置</div>
+                    <div id="unassignedPoolBox" class="hidden bg-zinc-950 p-3.5 rounded-xl border border-zinc-800 space-y-2">
+                        <div class="text-xs font-bold text-amber-400">未配置の単語 ドラッグまたはタップでTier行へ配置</div>
                         <div id="unassignedTileList" class="flex flex-wrap gap-2 min-h-[40px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'UNASSIGNED')"></div>
-                        <button id="btnFinishTierPlacement" onclick="finishTierPlacement()" class="w-full mt-2 bg-gradient-to-r from-amber-500 to-purple-600 hover:from-amber-400 hover:to-purple-500 text-white font-black py-2.5 rounded-xl shadow text-xs">
+                        <button id="btnFinishTierPlacement" onclick="finishTierPlacement()" class="w-full mt-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black py-2.5 rounded-xl shadow text-xs">
                             Tier配置を完了して推論へ進む ➔
                         </button>
                     </div>
                 </div>
 
                 <!-- Shared Guesses Display (全員の予想一覧) -->
-                <div id="sharedChildGuessesBox" class="glass-panel p-4 rounded-3xl border border-amber-500/30 space-y-2 bg-slate-950/80">
-                    <div class="flex justify-between items-center border-b border-purple-500/20 pb-1.5">
-                        <span class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                <div id="sharedChildGuessesBox" class="tier-card p-4 rounded-2xl border border-zinc-800 space-y-2 bg-zinc-950">
+                    <div class="flex justify-between items-center border-b border-zinc-800 pb-1.5">
+                        <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
                             <i class="fa-solid fa-comments"></i> 子みんなの出している裏テーマ予想一覧（全員共有）
                         </span>
                     </div>
@@ -365,82 +373,82 @@
                 </div>
 
                 <!-- Child Guessing Form -->
-                <div id="childGuessArea" class="hidden glass-panel p-5 rounded-3xl border border-purple-500/30 space-y-3 max-w-xl mx-auto">
+                <div id="childGuessArea" class="hidden tier-card p-5 rounded-2xl border border-zinc-800 space-y-3 max-w-xl mx-auto">
                     <div class="text-center">
                         <h4 class="font-black text-lg text-white">親の「評価軸（裏テーマ）」を推測！</h4>
-                        <p class="text-xs text-purple-200/80">（例: 甘さ順、値段が高い順、好き嫌いが分かれる順 など）</p>
+                        <p class="text-xs text-zinc-400">（例: 甘さ順、値段が高い順、好き嫌いが分かれる順 など）</p>
                     </div>
                     <div class="flex gap-2">
-                        <input type="text" id="childGuessInput" placeholder="裏テーマを入力" class="flex-grow bg-slate-950 border border-purple-500/40 rounded-xl px-4 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
-                        <button onclick="submitChildGuess()" class="bg-gradient-to-r from-amber-500 to-purple-600 hover:from-amber-400 hover:to-purple-500 text-white font-black px-5 py-2.5 rounded-xl text-xs shadow transition transform active:scale-95">
+                        <input type="text" id="childGuessInput" placeholder="裏テーマを入力" class="flex-grow bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
+                        <button onclick="submitChildGuess()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black px-5 py-2.5 rounded-xl text-xs shadow transition transform active:scale-95">
                             解答提出
                         </button>
                     </div>
                 </div>
 
-                <!-- Parent Judgment Control Area -->
-                <div id="parentJudgeArea" class="hidden glass-panel p-5 rounded-3xl border border-amber-500/40 space-y-3 bg-slate-950/90 max-w-2xl mx-auto">
+                <!-- Parent Judgment Control Area (Multiple Winners & Selectable Correct/Incorrect Style) -->
+                <div id="parentJudgeArea" class="hidden tier-card p-5 rounded-2xl border border-amber-500/40 space-y-3 bg-zinc-950 max-w-2xl mx-auto">
                     <div class="text-center">
-                        <span class="text-xs font-bold text-amber-300">親専用 解答の採点</span>
-                        <p class="text-xs text-purple-200">正解の予想があれば「正解 ◯」を押してください。</p>
+                        <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">親専用：解答の採点パネル</span>
+                        <p class="text-xs text-zinc-400 mt-1">それぞれのプレイヤーの予想に対して「正解」「不正解」を決定してください（複数人正解可）。</p>
                     </div>
-                    <div id="parentJudgeList" class="space-y-2"></div>
-                    <button onclick="finishRoundWithoutWinner()" class="w-full bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 font-bold py-2.5 rounded-xl text-xs transition">
-                        正解者なしで次のステップ・ラウンドへ ➔
+                    <div id="parentJudgeList" class="space-y-2.5 pt-2"></div>
+                    <button onclick="confirmAndSubmitJudgments()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black py-3.5 rounded-xl text-sm shadow-lg transition transform active:scale-95">
+                        判定を決定して次へ進む ➔
                     </button>
                 </div>
             </div>
 
             <!-- SUBVIEW RESULT (WITH TIER DISPLAY) -->
             <div id="subViewResult" class="hidden space-y-5">
-                <div class="glass-panel p-6 md:p-8 rounded-3xl border border-purple-500/30 text-center space-y-4">
+                <div class="tier-card p-6 md:p-8 rounded-2xl border border-zinc-800 text-center space-y-4">
                     <div class="space-y-1">
-                        <span class="px-3.5 py-1 bg-amber-500/20 text-amber-300 border border-amber-400/30 rounded-full text-xs font-bold uppercase">
+                        <span id="resultPhaseBadge" class="px-3.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-xs font-bold uppercase">
                             ROUND FINISHED
                         </span>
                         <h3 id="resultTitle" class="text-2xl md:text-3xl font-black text-white pt-2">ラウンド終了！</h3>
-                        <p id="resultSecretText" class="text-base md:text-xl font-black text-amber-300">正解の評価軸: 「--」</p>
+                        <p id="resultSecretText" class="text-base md:text-xl font-black text-amber-400">正解の評価軸: 「--」</p>
                     </div>
                 </div>
 
                 <!-- Finished Round Tier Display -->
-                <div class="glass-panel p-5 rounded-3xl border border-purple-500/30 space-y-3">
-                    <div class="flex justify-between items-center border-b border-purple-500/20 pb-2">
-                        <h3 class="text-base font-black text-white flex items-center gap-2">
-                            <i class="fa-solid fa-layer-group text-amber-300"></i> 完成した Tier 表 (答え合わせ)
+                <div class="tier-card p-5 rounded-2xl border border-zinc-800 space-y-3">
+                    <div class="flex justify-between items-center border-b border-zinc-800 pb-2">
+                        <h3 class="text-base font-black text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group text-amber-400"></i> 完成した Tier 表 (答え合わせ)
                         </h3>
                     </div>
 
                     <div class="space-y-2 font-bold text-sm">
-                        <div class="flex items-center rounded-2xl border tier-s overflow-hidden min-h-[56px]">
-                            <div class="w-12 md:w-16 h-full tier-header-s flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-amber-500/40">S</div>
+                        <div class="flex items-center rounded-xl border tier-row-s overflow-hidden min-h-[56px]">
+                            <div class="w-12 md:w-16 h-full tier-header-s flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-red-600/50">S</div>
                             <div id="result_tier_S" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
                         </div>
-                        <div class="flex items-center rounded-2xl border tier-a overflow-hidden min-h-[56px]">
-                            <div class="w-12 md:w-16 h-full tier-header-a flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-purple-500/40">A</div>
+                        <div class="flex items-center rounded-xl border tier-row-a overflow-hidden min-h-[56px]">
+                            <div class="w-12 md:w-16 h-full tier-header-a flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-orange-600/50">A</div>
                             <div id="result_tier_A" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
                         </div>
-                        <div class="flex items-center rounded-2xl border tier-b overflow-hidden min-h-[56px]">
-                            <div class="w-12 md:w-16 h-full tier-header-b flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-blue-500/40">B</div>
+                        <div class="flex items-center rounded-xl border tier-row-b overflow-hidden min-h-[56px]">
+                            <div class="w-12 md:w-16 h-full tier-header-b flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-yellow-600/50">B</div>
                             <div id="result_tier_B" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
                         </div>
-                        <div class="flex items-center rounded-2xl border tier-c overflow-hidden min-h-[56px]">
-                            <div class="w-12 md:w-16 h-full tier-header-c flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-emerald-500/40">C</div>
+                        <div class="flex items-center rounded-xl border tier-row-c overflow-hidden min-h-[56px]">
+                            <div class="w-12 md:w-16 h-full tier-header-c flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-green-600/50">C</div>
                             <div id="result_tier_C" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
                         </div>
-                        <div class="flex items-center rounded-2xl border tier-d overflow-hidden min-h-[56px]">
-                            <div class="w-12 md:w-16 h-full tier-header-d flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-slate-500/40">D</div>
+                        <div class="flex items-center rounded-xl border tier-row-d overflow-hidden min-h-[56px]">
+                            <div class="w-12 md:w-16 h-full tier-header-d flex items-center justify-center font-black text-lg md:text-xl py-3 border-r border-blue-600/50">D</div>
                             <div id="result_tier_D" class="flex-grow p-2 flex flex-wrap gap-2 min-h-[44px]"></div>
                         </div>
                     </div>
                 </div>
 
                 <div id="hostNextRoundControls" class="hidden max-w-md mx-auto pt-2">
-                    <button onclick="startNextRound()" class="w-full bg-gradient-to-r from-amber-500 via-purple-600 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white font-black text-lg py-4 rounded-2xl shadow-xl transition transform active:scale-95">
+                    <button onclick="startNextRound()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black text-lg py-4 rounded-xl shadow-xl transition transform active:scale-95">
                         次のラウンドへ ➔
                     </button>
                 </div>
-                <p id="clientNextRoundMsg" class="hidden text-center text-xs text-purple-300/70 animate-pulse">
+                <p id="clientNextRoundMsg" class="hidden text-center text-xs text-zinc-400 animate-pulse">
                     ホストが次のラウンドを開始するのを待っています...
                 </p>
             </div>
@@ -450,34 +458,34 @@
     </main>
 
     <!-- RESULT / JUDGMENT MODAL -->
-    <div id="quickResultModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md pointer-events-none">
-        <div class="glass-panel max-w-sm w-full rounded-3xl p-6 border-2 border-amber-400 shadow-2xl text-center animate-pop space-y-4 bg-slate-950/90">
+    <div id="quickResultModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md pointer-events-none">
+        <div class="tier-card max-w-sm w-full rounded-2xl p-6 border-2 border-amber-400 shadow-2xl text-center animate-pop space-y-4 bg-zinc-950">
             <div id="quickResultIcon" class="text-5xl">👑</div>
             <div class="space-y-1">
-                <span id="quickResultSubtitle" class="text-xs font-bold text-purple-300">判定結果</span>
+                <span id="quickResultSubtitle" class="text-xs font-bold text-zinc-400">判定結果</span>
                 <h3 id="quickResultTitle" class="text-2xl font-black text-white">正解！</h3>
             </div>
-            <div id="quickResultBody" class="text-xs font-bold text-purple-200"></div>
+            <div id="quickResultBody" class="text-xs font-bold text-zinc-300"></div>
         </div>
     </div>
 
     <!-- NOTIFICATION MODAL -->
-    <div id="actionNoticeModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm pointer-events-none">
-        <div class="glass-panel max-w-sm w-full rounded-3xl p-6 border-2 border-purple-400 shadow-2xl text-center animate-pop space-y-3 bg-slate-900">
+    <div id="actionNoticeModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm pointer-events-none">
+        <div class="tier-card max-w-sm w-full rounded-2xl p-6 border-2 border-amber-400/50 shadow-2xl text-center animate-pop space-y-3 bg-zinc-950">
             <div id="noticeIcon" class="text-4xl">📢</div>
             <h3 id="noticeTitle" class="text-lg font-black text-white">通知</h3>
-            <p id="noticeBody" class="text-xs font-bold text-purple-300">内容</p>
+            <p id="noticeBody" class="text-xs font-bold text-zinc-300">内容</p>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="p-4 text-center text-xs text-purple-300/50 border-t border-purple-500/10">
+    <footer class="p-4 text-center text-xs text-zinc-600 border-t border-zinc-900">
         &copy; TIER-KING Online
     </footer>
 
     <!-- GAME ENGINE & PEERJS SCRIPT -->
     <script>
-        const PREFIX = "tier-king-online-v1-";
+        const PREFIX = "tier-king-online-v2-";
 
         const PLAYER_COLORS = [
             '#f43f5e', '#3b82f6', '#10b981', '#eab308',
@@ -533,7 +541,8 @@
             { cat: "小動物の", sec: "飼いやすい順" }, { cat: "小動物の", sec: "人気順" },
             { cat: "海の生き物の", sec: "凶暴な順" }, { cat: "海の生き物の", sec: "水族館で人気な順" },
             { cat: "昆虫の", sec: "カッコいい順" }, { cat: "昆虫の", sec: "捕まえるのが難しい順" },
-            { cat: "名作アニメの", sec: "泣ける順" }, { cat: "名作アニメの", sec: "有名な順" }, { cat: "ジブリ作品の", sec: "有名な順" }, { cat: "ジブリ作品の", sec: "感動する順" },
+            { cat: "名作アニメの", sec: "泣ける順" }, { cat: "名作アニメの", sec: "有名な順" },
+            { cat: "ジブリ作品の", sec: "有名な順" }, { cat: "ジブリ作品の", sec: "感動する順" },
             { cat: "ポケモンのタイプの", sec: "強い順" }, { cat: "ポケモンのタイプの", sec: "人気順" },
             { cat: "RPGの職業の", sec: "必須度が高い順" }, { cat: "RPGの職業の", sec: "格好いい順" },
             { cat: "職業の", sec: "憧れる順" }, { cat: "職業の", sec: "専門知識が必要な順" }, { cat: "職業の", sec: "忙しそうな順" },
@@ -549,6 +558,7 @@
             hostId: "",
             status: 'LOBBY',
             roundNumber: 1,
+            maxLaps: 2,         // 全員が親をやる周回数 (デフォルト2周)
             parentIndex: 0,
             category: "",
             secretTheme: "",
@@ -558,8 +568,11 @@
             tierPlacements: { S: [], A: [], B: [], C: [], D: [], UNASSIGNED: [] },
             step: 1,
             childGuesses: {},
-            lastResultModal: null
+            lastResultModal: null,
+            isGameOver: false
         };
+
+        let localJudgeSelections = {};
 
         let soundEnabled = true;
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -748,6 +761,13 @@
             renderRoomState();
         }
 
+        window.changeLapSetting = function() {
+            if (!isHost) return;
+            const select = document.getElementById('lapCountSelect');
+            roomData.maxLaps = parseInt(select.value) || 2;
+            broadcastState();
+        };
+
         function handleHostData(conn, data) {
             if (data.type === 'JOIN') {
                 if (roomData.status !== 'LOBBY') {
@@ -760,6 +780,9 @@
                 broadcastState();
             } else if (data.type === 'SELECT_COLOR') {
                 processSelectColor(data.playerId, data.color);
+            } else if (data.type === 'UPDATE_SETTINGS') {
+                roomData.maxLaps = data.maxLaps;
+                broadcastState();
             } else if (data.type === 'SUBMIT_PARENT_THEME') {
                 processSubmitParentTheme(data.category, data.secretTheme);
             } else if (data.type === 'SUBMIT_WORD') {
@@ -770,10 +793,8 @@
                 processFinishTier();
             } else if (data.type === 'SUBMIT_CHILD_GUESS') {
                 processSubmitChildGuess(data.playerId, data.guess);
-            } else if (data.type === 'JUDGE_GUESS') {
-                processJudgeGuess(data.targetPlayerId, data.isCorrect);
-            } else if (data.type === 'FINISH_ROUND_NO_WINNER') {
-                processFinishRoundWithoutWinner();
+            } else if (data.type === 'SUBMIT_JUDGMENTS') {
+                processSubmitJudgments(data.judgments);
             } else if (data.type === 'NEXT_ROUND') {
                 processStartNextRound();
             }
@@ -819,8 +840,11 @@
                 return;
             }
 
+            const select = document.getElementById('lapCountSelect');
+            roomData.maxLaps = parseInt(select.value) || 2;
             roomData.roundNumber = 1;
             roomData.parentIndex = 0;
+            roomData.isGameOver = false;
             initRound();
         };
 
@@ -834,6 +858,7 @@
             roomData.tierPlacements = { S: [], A: [], B: [], C: [], D: [], UNASSIGNED: [] };
             roomData.step = 1;
             roomData.childGuesses = {};
+            localJudgeSelections = {};
 
             roomData.status = 'PARENT_THEME_SETUP';
             broadcastState();
@@ -841,8 +866,10 @@
 
         window.submitParentTheme = function() {
             playSound('tap');
-            const cat = document.getElementById('parentCategoryInput').value.trim();
-            const sec = document.getElementById('parentSecretInput').value.trim();
+            const catEl = document.getElementById('parentCategoryInput');
+            const secEl = document.getElementById('parentSecretInput');
+            const cat = catEl ? catEl.value.trim() : '';
+            const sec = secEl ? secEl.value.trim() : '';
 
             if (!cat || !sec) {
                 alert("ジャンルと秘密の評価軸の両方を入力してください");
@@ -975,60 +1002,82 @@
             broadcastState();
         }
 
-        window.judgeChildGuess = function(targetPlayerId, isCorrect) {
+        window.setLocalJudge = function(targetPlayerId, isCorrect) {
             playSound('tap');
+            localJudgeSelections[targetPlayerId] = isCorrect;
+            
+            const btnCorrect = document.getElementById(`btn_correct_${targetPlayerId}`);
+            const btnIncorrect = document.getElementById(`btn_incorrect_${targetPlayerId}`);
+            if (btnCorrect && btnIncorrect) {
+                if (isCorrect) {
+                    btnCorrect.className = "px-3.5 py-1.5 rounded-lg text-xs font-black bg-emerald-600 text-white shadow ring-2 ring-emerald-400";
+                    btnIncorrect.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-zinc-800 text-zinc-400 hover:bg-zinc-700";
+                } else {
+                    btnCorrect.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-zinc-800 text-zinc-400 hover:bg-zinc-700";
+                    btnIncorrect.className = "px-3.5 py-1.5 rounded-lg text-xs font-black bg-rose-600 text-white shadow ring-2 ring-rose-400";
+                }
+            }
+        };
+
+        window.confirmAndSubmitJudgments = function() {
+            playSound('tap');
+            const guesses = Object.keys(roomData.childGuesses);
+            guesses.forEach(cId => {
+                if (localJudgeSelections[cId] === undefined) {
+                    localJudgeSelections[cId] = false;
+                }
+            });
+
             if (isHost) {
-                processJudgeGuess(targetPlayerId, isCorrect);
+                processSubmitJudgments(localJudgeSelections);
             } else {
-                hostConn.send({ type: 'JUDGE_GUESS', targetPlayerId: targetPlayerId, isCorrect: isCorrect });
+                hostConn.send({ type: 'SUBMIT_JUDGMENTS', judgments: localJudgeSelections });
             }
         };
 
         function sendResultModalBroadcast(title, body, isWin) {
             showQuickResultModal(title, body, isWin);
             if (isHost) {
-                Object.values(connections).forEach(c => c.send({ type: 'SHOW_RESULT_MODAL', title, body, isWin, duration: 3000 }));
+                Object.values(connections).forEach(c => c.send({ type: 'SHOW_RESULT_MODAL', title, body, isWin, duration: 3500 }));
             }
         }
 
-        function processJudgeGuess(targetPlayerId, isCorrect) {
-            const targetPlayer = roomData.players[targetPlayerId];
+        function processSubmitJudgments(judgments) {
             const parentId = roomData.playerOrder[roomData.parentIndex];
             const parentPlayer = roomData.players[parentId];
 
-            if (isCorrect) {
-                const stepBonus = roomData.step === 1 ? 1 : 2;
-                if (parentPlayer) parentPlayer.score += stepBonus;
-                if (targetPlayer) targetPlayer.score += 2;
+            let correctPlayersNames = [];
+            let anyCorrect = false;
 
-                sendResultModalBroadcast("正解！🎉", `${targetPlayer ? targetPlayer.name : ''} が見事見破りました！\n親 (+${stepBonus}pt) / 子 (+2pt)`, true);
+            Object.entries(judgments).forEach(([cId, isCorrect]) => {
+                const targetPlayer = roomData.players[cId];
+                if (isCorrect && targetPlayer) {
+                    anyCorrect = true;
+                    correctPlayersNames.push(targetPlayer.name);
+                    const stepBonus = roomData.step === 1 ? 1 : 2;
+                    if (parentPlayer) parentPlayer.score += stepBonus;
+                    targetPlayer.score += 2;
+                }
+            });
 
+            if (anyCorrect) {
+                sendResultModalBroadcast("正解者出ました！🎉", `${correctPlayersNames.join(', ')} が見事見破りました！\n正解の評価軸: 「${roomData.secretTheme}」`, true);
                 roomData.status = 'ROUND_RESULT';
-            }
-
-            broadcastState();
-        }
-
-        window.finishRoundWithoutWinner = function() {
-            playSound('tap');
-            if (isHost) {
-                processFinishRoundWithoutWinner();
+                broadcastState();
             } else {
-                hostConn.send({ type: 'FINISH_ROUND_NO_WINNER' });
+                if (roomData.step === 1) {
+                    roomData.step = 2;
+                    roomData.childGuesses = {};
+                    localJudgeSelections = {};
+                    roomData.status = 'WORD_INPUT';
+                    showNotice("💡", "2回目の推理チャンス", "全員不正解でした。追加の単語を記入して再チャレンジ！");
+                    broadcastState();
+                } else {
+                    sendResultModalBroadcast("全員不正解", `正解者なし！評価軸は「${roomData.secretTheme}」でした。`, false);
+                    roomData.status = 'ROUND_RESULT';
+                    broadcastState();
+                }
             }
-        };
-
-        function processFinishRoundWithoutWinner() {
-            if (roomData.step === 1) {
-                roomData.step = 2;
-                roomData.childGuesses = {};
-                roomData.status = 'WORD_INPUT';
-                showNotice("💡", "2回目の推理チャンス", "追加の単語を記入して再チャレンジ！");
-            } else {
-                sendResultModalBroadcast("全員不正解", `正解者なし！評価軸は「${roomData.secretTheme}」でした。`, false);
-                roomData.status = 'ROUND_RESULT';
-            }
-            broadcastState();
         }
 
         window.startNextRound = function() {
@@ -1041,9 +1090,18 @@
         };
 
         function processStartNextRound() {
-            roomData.roundNumber++;
-            roomData.parentIndex = (roomData.parentIndex + 1) % roomData.playerOrder.length;
-            initRound();
+            const totalPlayers = Object.keys(roomData.players).length;
+            const totalRoundsNeeded = totalPlayers * roomData.maxLaps;
+
+            if (roomData.roundNumber >= totalRoundsNeeded) {
+                roomData.isGameOver = true;
+                roomData.status = 'ROUND_RESULT';
+                broadcastState();
+            } else {
+                roomData.roundNumber++;
+                roomData.parentIndex = (roomData.parentIndex + 1) % totalPlayers;
+                initRound();
+            }
         }
 
         function renderRoomState() {
@@ -1052,18 +1110,20 @@
             const isHostUser = roomData.hostId === myId;
             const parentId = roomData.playerOrder[roomData.parentIndex] || roomData.hostId;
             const isParent = myId === parentId;
+            const totalPlayers = Object.keys(roomData.players).length;
+            const maxRounds = totalPlayers * roomData.maxLaps;
 
             const scoreListEl = document.getElementById('headerScoreList');
             if (scoreListEl) {
                 scoreListEl.innerHTML = '';
                 Object.values(roomData.players).forEach(p => {
                     const tag = document.createElement('div');
-                    tag.className = "bg-slate-900/90 px-3 py-1.5 rounded-2xl border text-xs font-black flex items-center gap-1.5 shadow";
+                    tag.className = "bg-zinc-900 px-3 py-1.5 rounded-xl border text-xs font-black flex items-center gap-1.5 shadow";
                     tag.style.borderColor = `${p.color}60`;
                     tag.innerHTML = `
                         <span class="w-2.5 h-2.5 rounded-full" style="background-color:${p.color}"></span>
-                        <span class="text-slate-100">${escapeHtml(p.name)}:</span>
-                        <span class="font-mono text-sm text-amber-300">${p.score}pt</span>
+                        <span class="text-zinc-200">${escapeHtml(p.name)}:</span>
+                        <span class="font-mono text-sm text-amber-400">${p.score}pt</span>
                     `;
                     scoreListEl.appendChild(tag);
                 });
@@ -1074,13 +1134,26 @@
 
                 const startBtn = document.getElementById('startGameBtn');
                 const waitingMsg = document.getElementById('waitingForHostMsg');
+                const lapSelect = document.getElementById('lapCountSelect');
+                const roleNotice = document.getElementById('settingsRoleNotice');
+
+                if (lapSelect) {
+                    lapSelect.value = roomData.maxLaps;
+                    if (isHostUser) {
+                        lapSelect.disabled = false;
+                        roleNotice.innerText = "ホスト設定可能";
+                    } else {
+                        lapSelect.disabled = true;
+                        roleNotice.innerText = "ホストが設定中";
+                    }
+                }
 
                 if (isHostUser) {
                     if (startBtn) startBtn.classList.remove('hidden');
                     if (waitingMsg) waitingMsg.classList.add('hidden');
                 } else {
                     if (startBtn) startBtn.classList.add('hidden');
-                    if (waitingMsg) waitingMsg.classList.remove('hidden');
+                    if (waitingMsg) waitingMsg.classList.add('hidden'); // ゲストも分かりやすくするため調整
                 }
 
                 const playerList = document.getElementById('playerList');
@@ -1091,16 +1164,16 @@
 
                     playersArray.forEach(p => {
                         const div = document.createElement('div');
-                        div.className = "flex items-center justify-between bg-slate-950/80 border p-3 rounded-2xl";
+                        div.className = "flex items-center justify-between bg-zinc-950 border p-3 rounded-xl";
                         div.style.borderColor = `${p.color}50`;
                         div.innerHTML = `
                             <div class="flex items-center space-x-2.5">
                                 <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white border shadow" style="background-color:${p.color}">
                                     ${escapeHtml(p.name.charAt(0))}
                                 </div>
-                                <span class="font-bold text-sm text-slate-100">${escapeHtml(p.name)}</span>
+                                <span class="font-bold text-sm text-zinc-100">${escapeHtml(p.name)}</span>
                             </div>
-                            ${p.isHost ? '<span class="text-[10px] font-bold bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-400/30">ホスト</span>' : ''}
+                            ${p.isHost ? '<span class="text-[10px] font-bold bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/30">ホスト</span>' : ''}
                         `;
                         playerList.appendChild(div);
                     });
@@ -1120,7 +1193,7 @@
                         btn.type = 'button';
                         btn.onclick = () => { if (!isTaken) selectMyColor(hex); };
                         btn.disabled = isTaken;
-                        btn.className = `w-8 h-8 rounded-full border-2 transition transform relative flex items-center justify-center ${isMyColor ? 'ring-2 ring-amber-400 scale-110 border-white' : isTaken ? 'opacity-25 cursor-not-allowed border-slate-700' : 'hover:scale-105 border-slate-500/50'}`;
+                        btn.className = `w-8 h-8 rounded-full border-2 transition transform relative flex items-center justify-center ${isMyColor ? 'ring-2 ring-amber-400 scale-110 border-white' : isTaken ? 'opacity-25 cursor-not-allowed border-zinc-800' : 'hover:scale-105 border-zinc-600'}`;
                         btn.style.backgroundColor = hex;
 
                         if (isMyColor) btn.innerHTML = '<i class="fa-solid fa-check text-white text-xs drop-shadow"></i>';
@@ -1131,7 +1204,7 @@
             } else {
                 showView('viewGame');
 
-                document.getElementById('phaseBadge').innerText = `ラウンド ${roomData.roundNumber} (${roomData.step}回目)`;
+                document.getElementById('phaseBadge').innerText = `ラウンド ${roomData.roundNumber} / ${maxRounds} (${roomData.step}回目)`;
                 const parentPlayer = roomData.players[parentId];
                 document.getElementById('parentBadge').innerText = `親: ${parentPlayer ? parentPlayer.name : '--'}`;
                 
@@ -1153,6 +1226,10 @@
                 if (roomData.status === 'PARENT_THEME_SETUP') {
                     if (isParent) {
                         document.getElementById('subViewParentTheme').classList.remove('hidden');
+                        const catInput = document.getElementById('parentCategoryInput');
+                        const secInput = document.getElementById('parentSecretInput');
+                        if (catInput) catInput.value = '';
+                        if (secInput) secInput.value = '';
                     } else {
                         document.getElementById('subViewParentWaiting').classList.remove('hidden');
                     }
@@ -1171,9 +1248,10 @@
                         if (wordInput) wordInput.value = '';
                         btnSubmitWord.classList.add('hidden');
                         wordWaitMsg.classList.remove('hidden');
-                        document.getElementById('submittedWordCount').innerText = Object.keys(roomData.submittedWords).length - (roomData.step === 2 ? Object.keys(roomData.players).length : 0);
-                        document.getElementById('totalWordCount').innerText = Object.keys(roomData.players).length;
+                        document.getElementById('submittedWordCount').innerText = Object.keys(roomData.submittedWords).length - (roomData.step === 2 ? totalPlayers : 0);
+                        document.getElementById('totalWordCount').innerText = totalPlayers;
                     } else {
+                        if (wordInput) wordInput.value = '';
                         btnSubmitWord.classList.remove('hidden');
                         wordWaitMsg.classList.add('hidden');
                     }
@@ -1185,7 +1263,7 @@
                     Object.values(roomData.submittedWords).forEach(item => {
                         const p = roomData.players[item.ownerId];
                         const chip = document.createElement('div');
-                        chip.className = "px-3 py-1 bg-slate-900 rounded-xl border text-xs font-bold flex items-center gap-1.5 shadow";
+                        chip.className = "px-3 py-1 bg-zinc-900 rounded-xl border text-xs font-bold flex items-center gap-1.5 shadow";
                         chip.style.borderColor = p ? `${p.color}80` : '#ccc';
                         chip.innerHTML = `
                             <span class="w-2 h-2 rounded-full" style="background-color:${p ? p.color : '#fff'}"></span>
@@ -1199,17 +1277,17 @@
                     sharedGuessesListEl.innerHTML = '';
                     const guessesEntries = Object.entries(roomData.childGuesses);
                     if (guessesEntries.length === 0) {
-                        sharedGuessesListEl.innerHTML = '<div class="text-xs text-slate-500 font-bold text-center py-1">まだ誰も予想を提出していません</div>';
+                        sharedGuessesListEl.innerHTML = '<div class="text-xs text-zinc-500 font-bold text-center py-1">まだ誰も予想を提出していません</div>';
                     } else {
                         guessesEntries.forEach(([cId, gText]) => {
                             const cPlayer = roomData.players[cId];
                             const chip = document.createElement('div');
-                            chip.className = "inline-flex items-center gap-2 bg-slate-900 border px-3 py-1.5 rounded-xl text-xs font-bold mr-2 mb-1 shadow";
+                            chip.className = "inline-flex items-center gap-2 bg-zinc-900 border px-3 py-1.5 rounded-xl text-xs font-bold mr-2 mb-1 shadow";
                             chip.style.borderColor = cPlayer ? `${cPlayer.color}80` : '#ccc';
                             chip.innerHTML = `
                                 <span class="w-2 h-2 rounded-full" style="background-color:${cPlayer ? cPlayer.color : '#fff'}"></span>
-                                <span class="text-slate-300">${escapeHtml(cPlayer ? cPlayer.name : '')}:</span>
-                                <span class="text-amber-300 font-black">「${escapeHtml(gText)}」</span>
+                                <span class="text-zinc-300">${escapeHtml(cPlayer ? cPlayer.name : '')}:</span>
+                                <span class="text-amber-400 font-black">「${escapeHtml(gText)}」</span>
                             `;
                             sharedGuessesListEl.appendChild(chip);
                         });
@@ -1226,7 +1304,7 @@
                             const tile = document.createElement('div');
                             tile.draggable = isParent && roomData.status === 'TIER_PLACEMENT';
                             tile.ondragstart = (e) => handleDragStart(e, item.word, item.ownerId, tierKey);
-                            tile.className = "word-tile bg-slate-900 border px-3 py-1.5 rounded-xl text-xs font-black shadow flex items-center gap-1.5";
+                            tile.className = "word-tile bg-zinc-900 border px-3 py-1.5 rounded-xl text-xs font-black shadow flex items-center gap-1.5";
                             tile.style.borderColor = p ? p.color : '#fff';
                             tile.innerHTML = `
                                 <span class="w-2 h-2 rounded-full" style="background-color:${p ? p.color : '#fff'}"></span>
@@ -1263,19 +1341,21 @@
                             
                             const guesses = Object.entries(roomData.childGuesses);
                             if (guesses.length === 0) {
-                                judgeList.innerHTML = '<div class="text-xs text-slate-400 text-center py-2">子の提出待ち...</div>';
+                                judgeList.innerHTML = '<div class="text-xs text-zinc-500 text-center py-2">子の提出待ち...</div>';
                             } else {
                                 guesses.forEach(([cId, gText]) => {
                                     const cPlayer = roomData.players[cId];
+                                    const currentSel = localJudgeSelections[cId] === true;
                                     const row = document.createElement('div');
-                                    row.className = "flex justify-between items-center bg-slate-900 p-2.5 rounded-xl border border-purple-500/20";
+                                    row.className = "flex flex-col sm:flex-row justify-between items-start sm:items-center bg-zinc-900 p-3 rounded-xl border border-zinc-800 gap-2";
                                     row.innerHTML = `
                                         <div>
-                                            <span class="text-xs font-bold text-amber-300">${escapeHtml(cPlayer ? cPlayer.name : '')}:</span>
+                                            <span class="text-xs font-bold text-amber-400">${escapeHtml(cPlayer ? cPlayer.name : '')}:</span>
                                             <span class="text-sm font-black text-white ml-2">「${escapeHtml(gText)}」</span>
                                         </div>
-                                        <div>
-                                            <button onclick="judgeChildGuess('${cId}', true)" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-4 py-1.5 rounded-lg text-xs shadow">正解 ◯</button>
+                                        <div class="flex gap-2 w-full sm:w-auto justify-end">
+                                            <button type="button" id="btn_correct_${cId}" onclick="setLocalJudge('${cId}', true)" class="${currentSel ? 'px-3.5 py-1.5 rounded-lg text-xs font-black bg-emerald-600 text-white shadow ring-2 ring-emerald-400' : 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-zinc-800 text-zinc-400 hover:bg-zinc-700'}">正解 ◯</button>
+                                            <button type="button" id="btn_incorrect_${cId}" onclick="setLocalJudge('${cId}', false)" class="${!currentSel ? 'px-3.5 py-1.5 rounded-lg text-xs font-black bg-rose-600 text-white shadow ring-2 ring-rose-400' : 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-zinc-800 text-zinc-400 hover:bg-zinc-700'}">不正解 ✕</button>
                                         </div>
                                     `;
                                     judgeList.appendChild(row);
@@ -1287,15 +1367,28 @@
                                 childArea.classList.add('hidden');
                             } else {
                                 childArea.classList.remove('hidden');
+                                const guessInput = document.getElementById('childGuessInput');
+                                if (guessInput) guessInput.value = '';
                             }
                         }
                     }
 
                 } else if (roomData.status === 'ROUND_RESULT') {
                     document.getElementById('subViewResult').classList.remove('hidden');
-                    document.getElementById('resultSecretText').innerText = `正解の評価軸: 「${roomData.secretTheme}」`;
+                    
+                    const resPhaseBadge = document.getElementById('resultPhaseBadge');
+                    const resTitle = document.getElementById('resultTitle');
 
-                    // 結果発表画面でのTier表レンダリング
+                    if (roomData.isGameOver) {
+                        resPhaseBadge.innerText = "GAME FINISHED 🏆";
+                        resTitle.innerText = "全ラウンド終了！最終結果発表";
+                        document.getElementById('resultSecretText').innerText = "お疲れ様でした！最終勝者を称えましょう！";
+                    } else {
+                        resPhaseBadge.innerText = "ROUND FINISHED";
+                        resTitle.innerText = "ラウンド終了！";
+                        document.getElementById('resultSecretText').innerText = `正解の評価軸: 「${roomData.secretTheme}」`;
+                    }
+
                     ['S', 'A', 'B', 'C', 'D'].forEach(tierKey => {
                         const container = document.getElementById(`result_tier_${tierKey}`);
                         if (!container) return;
@@ -1305,7 +1398,7 @@
                         tiles.forEach(item => {
                             const p = roomData.players[item.ownerId];
                             const tile = document.createElement('div');
-                            tile.className = "bg-slate-900 border px-3 py-1.5 rounded-xl text-xs font-black shadow flex items-center gap-1.5";
+                            tile.className = "bg-zinc-900 border px-3 py-1.5 rounded-xl text-xs font-black shadow flex items-center gap-1.5";
                             tile.style.borderColor = p ? p.color : '#fff';
                             tile.innerHTML = `
                                 <span class="w-2 h-2 rounded-full" style="background-color:${p ? p.color : '#fff'}"></span>
@@ -1321,9 +1414,18 @@
                     if (isHostUser) {
                         hostNext.classList.remove('hidden');
                         clientNext.classList.add('hidden');
+                        const nextBtn = hostNext.querySelector('button');
+                        if (roomData.isGameOver) {
+                            nextBtn.innerText = "ロビーに戻る 🏠";
+                            nextBtn.onclick = () => { location.reload(); };
+                        } else {
+                            nextBtn.innerText = "次のラウンドへ ➔";
+                            nextBtn.onclick = () => { startNextRound(); };
+                        }
                     } else {
                         hostNext.classList.add('hidden');
                         clientNext.classList.remove('hidden');
+                        clientNext.innerText = roomData.isGameOver ? "ホストがゲームを終了しました..." : "ホストが次のラウンドを開始するのを待っています...";
                     }
                 }
             }
