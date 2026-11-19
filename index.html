@@ -52,7 +52,7 @@
             animation: fadeInScale 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* Tier Row Colors */
+        /* Classic Tier Row Colors */
         .tier-row-s { background: rgba(239, 68, 68, 0.3); border-color: #ef4444; }
         .tier-row-a { background: rgba(249, 115, 22, 0.3); border-color: #f97316; }
         .tier-row-b { background: rgba(234, 179, 8, 0.3); border-color: #eab308; }
@@ -113,7 +113,7 @@
                 </div>
                 <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight">TIER-KING</h2>
                 <p class="text-zinc-400 text-xs md:text-sm max-w-lg mx-auto leading-relaxed">
-                    親が秘密裏に設定した「評価軸（裏テーマ）」を、Tier表の並びから看破せよ！
+                    親が設定した「〇〇 の △△」の後半（評価軸）を、Tier表の並びから看破せよ！
                 </p>
             </div>
 
@@ -205,7 +205,7 @@
                         <span>参加プレイヤー (<span id="playerCount">0</span>名)</span>
                         <span class="text-zinc-500">3名以上推奨</span>
                     </div>
-                    <div id="playerList" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-50 overflow-y-auto pr-1"></div>
+                    <div id="playerList" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-52 overflow-y-auto pr-1"></div>
                 </div>
 
                 <div class="pt-2">
@@ -245,11 +245,11 @@
             <!-- Topic Banner -->
             <div id="topicCard" class="tier-card rounded-2xl p-5 text-center shadow-2xl border border-zinc-800 bg-zinc-950 space-y-2">
                 <span id="topicCategoryBadge" class="inline-block px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-xs font-bold">
-                    公開ジャンル
+                    お題（前半は公開・後半は秘密）
                 </span>
                 <h2 id="questionTopic" class="text-2xl md:text-4xl font-black text-white">「------」</h2>
                 <div id="secretThemeBox" class="hidden pt-2 text-xs font-bold text-amber-400 bg-amber-500/10 py-1.5 px-3 rounded-xl border border-amber-500/30 inline-block">
-                    🔒 親用・秘密の裏テーマ: <span id="secretThemeText">--</span>
+                    🔒 親用・完成お題: <span id="secretThemeText">--</span>
                 </div>
             </div>
 
@@ -257,33 +257,33 @@
             <div id="subViewParentTheme" class="hidden tier-card p-6 rounded-2xl border border-zinc-800 space-y-4 max-w-xl mx-auto">
                 <div class="text-center space-y-1">
                     <h3 class="text-xl font-black text-amber-400">あなたが今回の「親」です！</h3>
-                    <p class="text-xs text-zinc-400">ジャンルに沿った隠された評価軸（裏テーマ）を設定してください。</p>
+                    <p class="text-xs text-zinc-400">「〇〇 の △△」の形式でお題を自由に決めてください（ランダムボタンで例を入れて書き換えることもできます）。</p>
                 </div>
                 
                 <div class="flex justify-end">
-                    <button onclick="fillRandomPresetTopic()" class="bg-zinc-800 hover:bg-zinc-700 text-amber-400 border border-zinc-600 px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
-                        <i class="fa-solid fa-dice"></i> ランダムでお題を選ぶ (全200種+)
+                    <button type="button" onclick="fillRandomPresetTopic()" class="bg-zinc-800 hover:bg-zinc-700 text-amber-400 border border-zinc-600 px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-dice"></i> ランダムでお題例を入れる（編集可）
                     </button>
                 </div>
 
                 <div class="space-y-3">
                     <div>
-                        <label class="block text-xs font-bold text-zinc-400 mb-1">公開ジャンル</label>
-                        <input type="text" id="parentCategoryInput" placeholder="例: 野菜の" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
+                        <label class="block text-xs font-bold text-zinc-400 mb-1">① 公開するジャンル・主語（「〇〇の」の〇〇部分）</label>
+                        <input type="text" id="parentCategoryInput" placeholder="例: 野菜 / 動物 / 寿司ネタ / 飲み物" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-amber-400 mb-1">秘密の評価軸（裏テーマ） 子には隠されます</label>
-                        <input type="text" id="parentSecretInput" placeholder="例: 甘さ順" class="w-full bg-zinc-950 border border-amber-500/50 rounded-xl px-4 py-2.5 text-sm font-bold text-amber-400 focus:outline-none focus:border-amber-400">
+                        <label class="block text-xs font-bold text-amber-400 mb-1">② 伏せる評価軸（「〇〇の △△」の△△部分）※自由記述可</label>
+                        <input type="text" id="parentSecretInput" placeholder="例: 甘さ / 寿命 / 値段 / カフェイン量" class="w-full bg-zinc-950 border border-amber-500/50 rounded-xl px-4 py-2.5 text-sm font-bold text-amber-400 focus:outline-none focus:border-amber-400">
                     </div>
-                    <button onclick="submitParentTheme()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black text-base py-3.5 rounded-xl shadow-lg transition transform active:scale-95">
-                        お題と裏テーマを決定する ➔
+                    <button type="button" onclick="submitParentTheme()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black text-base py-3.5 rounded-xl shadow-lg transition transform active:scale-95">
+                        お題を決定する ➔
                     </button>
                 </div>
             </div>
 
             <div id="subViewParentWaiting" class="hidden text-center py-8 tier-card rounded-2xl p-6">
                 <i class="fa-solid fa-spinner fa-spin text-3xl text-amber-400 mb-3"></i>
-                <p class="text-sm font-bold text-zinc-300">親が裏テーマを設定しています...</p>
+                <p class="text-sm font-bold text-zinc-300">親がお題を設定しています...</p>
             </div>
 
             <!-- PHASE 2: WORD INPUT -->
@@ -294,7 +294,7 @@
                 </div>
                 <div class="space-y-3">
                     <input type="text" id="wordTileInput" maxlength="15" placeholder="単語を入力 (例: トマト)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-base font-bold text-white focus:outline-none focus:border-amber-400">
-                    <button id="btnSubmitWord" onclick="submitMyWordTile()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black text-base py-3.5 rounded-xl shadow-lg transition transform active:scale-95">
+                    <button type="button" id="btnSubmitWord" onclick="submitMyWordTile()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black text-base py-3.5 rounded-xl shadow-lg transition transform active:scale-95">
                         単語を提出する ➔
                     </button>
                     <p id="wordWaitMsg" class="hidden text-xs text-center text-zinc-400 font-bold animate-pulse">
@@ -354,19 +354,19 @@
 
                     <!-- Unassigned Pool for Parent Placement -->
                     <div id="unassignedPoolBox" class="hidden bg-zinc-950 p-3.5 rounded-xl border border-zinc-800 space-y-2">
-                        <div class="text-xs font-bold text-amber-400">未配置の単語 ドラッグまたはタップでTier行へ配置</div>
+                        <div class="text-xs font-bold text-amber-400">未配置の単語（ドラッグでTier行へ配置してください）</div>
                         <div id="unassignedTileList" class="flex flex-wrap gap-2 min-h-[40px]" ondragover="allowDrop(event)" ondrop="dropWordTile(event, 'UNASSIGNED')"></div>
-                        <button id="btnFinishTierPlacement" onclick="finishTierPlacement()" class="w-full mt-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black py-2.5 rounded-xl shadow text-xs">
+                        <button type="button" id="btnFinishTierPlacement" onclick="finishTierPlacement()" class="w-full mt-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black py-2.5 rounded-xl shadow text-xs">
                             Tier配置を完了して推論へ進む ➔
                         </button>
                     </div>
                 </div>
 
-                <!-- Shared Guesses Display (全員の予想一覧) -->
+                <!-- Shared Guesses Display -->
                 <div id="sharedChildGuessesBox" class="tier-card p-4 rounded-2xl border border-zinc-800 space-y-2 bg-zinc-950">
                     <div class="flex justify-between items-center border-b border-zinc-800 pb-1.5">
                         <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
-                            <i class="fa-solid fa-comments"></i> 子みんなの出している裏テーマ予想一覧（全員共有）
+                            <i class="fa-solid fa-comments"></i> 子みんなの出している評価軸（△△）予想一覧（全員共有）
                         </span>
                     </div>
                     <div id="sharedChildGuessesList" class="space-y-1.5 min-h-[30px] pt-1"></div>
@@ -375,31 +375,31 @@
                 <!-- Child Guessing Form -->
                 <div id="childGuessArea" class="hidden tier-card p-5 rounded-2xl border border-zinc-800 space-y-3 max-w-xl mx-auto">
                     <div class="text-center">
-                        <h4 class="font-black text-lg text-white">親の「評価軸（裏テーマ）」を推測！</h4>
-                        <p class="text-xs text-zinc-400">（例: 甘さ順、値段が高い順、好き嫌いが分かれる順 など）</p>
+                        <h4 class="font-black text-lg text-white">「<span id="guessTopicPrefix">--</span> の ？？？」を推測！</h4>
+                        <p class="text-xs text-zinc-400">（例: 甘さ / 寿命 / 値段 / 人気 など）</p>
                     </div>
                     <div class="flex gap-2">
-                        <input type="text" id="childGuessInput" placeholder="裏テーマを入力" class="flex-grow bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
-                        <button onclick="submitChildGuess()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black px-5 py-2.5 rounded-xl text-xs shadow transition transform active:scale-95">
+                        <input type="text" id="childGuessInput" placeholder="評価軸（？？？部分）を入力" class="flex-grow bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-amber-400">
+                        <button type="button" onclick="submitChildGuess()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black px-5 py-2.5 rounded-xl text-xs shadow transition transform active:scale-95">
                             解答提出
                         </button>
                     </div>
                 </div>
 
-                <!-- Parent Judgment Control Area (Multiple Winners & Selectable Correct/Incorrect Style) -->
+                <!-- Parent Judgment Control Area -->
                 <div id="parentJudgeArea" class="hidden tier-card p-5 rounded-2xl border border-amber-500/40 space-y-3 bg-zinc-950 max-w-2xl mx-auto">
                     <div class="text-center">
                         <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">親専用：解答の採点パネル</span>
-                        <p class="text-xs text-zinc-400 mt-1">それぞれのプレイヤーの予想に対して「正解」「不正解」を決定してください（複数人正解可）。</p>
+                        <p class="text-xs text-zinc-400 mt-1">それぞれのプレイヤーの予想に対して「正解 ◯」「不正解 ✕」を決定してください（複数人正解可）。</p>
                     </div>
                     <div id="parentJudgeList" class="space-y-2.5 pt-2"></div>
-                    <button onclick="confirmAndSubmitJudgments()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black py-3.5 rounded-xl text-sm shadow-lg transition transform active:scale-95">
+                    <button type="button" onclick="confirmAndSubmitJudgments()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black py-3.5 rounded-xl text-sm shadow-lg transition transform active:scale-95">
                         判定を決定して次へ進む ➔
                     </button>
                 </div>
             </div>
 
-            <!-- SUBVIEW RESULT (WITH TIER DISPLAY) -->
+            <!-- SUBVIEW RESULT (ROUND & FINAL GAME RESULT) -->
             <div id="subViewResult" class="hidden space-y-5">
                 <div class="tier-card p-6 md:p-8 rounded-2xl border border-zinc-800 text-center space-y-4">
                     <div class="space-y-1">
@@ -407,7 +407,13 @@
                             ROUND FINISHED
                         </span>
                         <h3 id="resultTitle" class="text-2xl md:text-3xl font-black text-white pt-2">ラウンド終了！</h3>
-                        <p id="resultSecretText" class="text-base md:text-xl font-black text-amber-400">正解の評価軸: 「--」</p>
+                        <p id="resultSecretText" class="text-base md:text-xl font-black text-amber-400">正解のお題: 「--」</p>
+                    </div>
+
+                    <!-- Final Standings Podium (Shown when isGameOver is true) -->
+                    <div id="finalRankingBox" class="hidden pt-4 border-t border-zinc-800 max-w-md mx-auto space-y-2 text-left">
+                        <div class="text-xs font-bold text-amber-400 text-center uppercase tracking-wider mb-2">🏆 最終順位発表 🏆</div>
+                        <div id="finalRankingList" class="space-y-2"></div>
                     </div>
                 </div>
 
@@ -415,7 +421,7 @@
                 <div class="tier-card p-5 rounded-2xl border border-zinc-800 space-y-3">
                     <div class="flex justify-between items-center border-b border-zinc-800 pb-2">
                         <h3 class="text-base font-black text-amber-400 flex items-center gap-2">
-                            <i class="fa-solid fa-layer-group text-amber-400"></i> 完成した Tier 表 (答え合わせ)
+                            <i class="fa-solid fa-layer-group text-amber-400"></i> 最終ラウンドの Tier 表
                         </h3>
                     </div>
 
@@ -444,12 +450,12 @@
                 </div>
 
                 <div id="hostNextRoundControls" class="hidden max-w-md mx-auto pt-2">
-                    <button onclick="startNextRound()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black text-lg py-4 rounded-xl shadow-xl transition transform active:scale-95">
+                    <button type="button" id="btnNextRoundAction" onclick="startNextRound()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-black text-lg py-4 rounded-xl shadow-xl transition transform active:scale-95">
                         次のラウンドへ ➔
                     </button>
                 </div>
                 <p id="clientNextRoundMsg" class="hidden text-center text-xs text-zinc-400 animate-pulse">
-                    ホストが次のラウンドを開始するのを待っています...
+                    ホストが次の操作を行うのを待っています...
                 </p>
             </div>
 
@@ -465,7 +471,7 @@
                 <span id="quickResultSubtitle" class="text-xs font-bold text-zinc-400">判定結果</span>
                 <h3 id="quickResultTitle" class="text-2xl font-black text-white">正解！</h3>
             </div>
-            <div id="quickResultBody" class="text-xs font-bold text-zinc-300"></div>
+            <div id="quickResultBody" class="text-xs font-bold text-zinc-300 whitespace-pre-line"></div>
         </div>
     </div>
 
@@ -485,68 +491,35 @@
 
     <!-- GAME ENGINE & PEERJS SCRIPT -->
     <script>
-        const PREFIX = "tier-king-online-v2-";
+        const PREFIX = "tier-king-online-v4-";
 
         const PLAYER_COLORS = [
             '#f43f5e', '#3b82f6', '#10b981', '#eab308',
             '#a855f7', '#f97316', '#06b6d4', '#ec4899'
         ];
 
+        // 公式ティア・キング準拠（「〇〇の △△」形式の例示プリセット・自由に書き換え可能）
         const TOPIC_PRESETS = [
-            { cat: "野菜の", sec: "甘い順" }, { cat: "野菜の", sec: "好き嫌いが分かれる順" }, { cat: "野菜の", sec: "値段が高い順" }, { cat: "野菜の", sec: "料理でよく使う順" }, { cat: "野菜の", sec: "腐りやすい順" },
-            { cat: "果物の", sec: "酸っぱい順" }, { cat: "果物の", sec: "高級な順" }, { cat: "果物の", sec: "皮を剥くのが面倒な順" }, { cat: "果物の", sec: "糖度が高い順" }, { cat: "果物の", sec: "水分が多い順" },
-            { cat: "居酒屋メニューの", sec: "最初に頼みたい順" }, { cat: "居酒屋メニューの", sec: "カロリーが高い順" }, { cat: "居酒屋メニューの", sec: "お酒が進む順" }, { cat: "居酒屋メニューの", sec: "提供が早い順" }, { cat: "居酒屋メニューの", sec: "定番順" },
-            { cat: "ラーメンのトッピングの", sec: "必須度が高い順" }, { cat: "ラーメンのトッピングの", sec: "こってり度順" }, { cat: "ラーメンのトッピングの", sec: "カロリーが高い順" }, { cat: "ラーメンのトッピングの", sec: "定番順" },
-            { cat: "おでんの具材の", sec: "味が染みている順" }, { cat: "おでんの具材の", sec: "人気順" }, { cat: "おでんの具材の", sec: "定番順" }, { cat: "おでんの具材の", sec: "冷めにくい順" },
-            { cat: "おにぎりの具の", sec: "定番順" }, { cat: "おにぎりの具の", sec: "高級感順" }, { cat: "おにぎりの具の", sec: "具が多い順" }, { cat: "おにぎりの具の", sec: "子供が好きな順" },
-            { cat: "寿司ネタの", sec: "値段が高い順" }, { cat: "寿司ネタの", sec: "子供が好きな順" }, { cat: "寿司ネタの", sec: "脂が乗っている順" }, { cat: "寿司ネタの", sec: "定番順" },
-            { cat: "コンビニ商品の", sec: "買ってしまう頻度順" }, { cat: "コンビニ商品の", sec: "ついで買いしてしまう順" }, { cat: "コンビニ商品の", sec: "定番順" },
-            { cat: "ファーストフードの", sec: "満足感が高い順" }, { cat: "ファーストフードの", sec: "提供が早い順" }, { cat: "ファーストフードの", sec: "カロリーが高い順" },
-            { cat: "カフェドリンクの", sec: "おしゃれ度順" }, { cat: "カフェドリンクの", sec: "甘い順" }, { cat: "カフェドリンクの", sec: "定番順" },
-            { cat: "焼肉の部位の", sec: "脂っこい順" }, { cat: "焼肉の部位の", sec: "高級な順" }, { cat: "焼肉の部位の", sec: "最初に焼く順" },
-            { cat: "中華料理の", sec: "油っこい順" }, { cat: "中華料理の", sec: "辛い順" }, { cat: "中華料理の", sec: "定番順" },
-            { cat: "洋食の", sec: "子供が好きな順" }, { cat: "洋食の", sec: "手間がかかる順" }, { cat: "洋食の", sec: "定番順" },
-            { cat: "和菓子の", sec: "甘い順" }, { cat: "和菓子の", sec: "高級感がある順" }, { cat: "和菓子の", sec: "お茶に合う順" },
-            { cat: "洋菓子の", sec: "カロリーが高い順" }, { cat: "洋菓子の", sec: "見た目が映える順" }, { cat: "洋菓子の", sec: "手土産の定番順" },
-            { cat: "パンの", sec: "満足感が高い順" }, { cat: "パンの", sec: "焼きたてが美味しい順" }, { cat: "パンの", sec: "定番順" },
-            { cat: "スープ・汁物の", sec: "温まる順" }, { cat: "スープ・汁物の", sec: "朝食に食べたい順" }, { cat: "スープ・汁物の", sec: "定番順" },
-            { cat: "丼ものの", sec: "ガッツリ度順" }, { cat: "丼ものの", sec: "定番順" }, { cat: "丼ものの", sec: "値段が高い順" },
-            { cat: "揚げ物の", sec: "重い順" }, { cat: "揚げ物の", sec: "定番順" }, { cat: "揚げ物の", sec: "お弁当に入っていて嬉しい順" },
-            { cat: "鍋料理の", sec: "冬に食べたい順" }, { cat: "鍋料理の", sec: "締めが美味しい順" }, { cat: "鍋料理の", sec: "定番順" },
-            { cat: "缶チューハイの味の", sec: "甘い順" }, { cat: "缶チューハイの味の", sec: "定番順" }, { cat: "缶チューハイの味の", sec: "飲みやすい順" },
-            { cat: "アイスフレーバーの", sec: "定番順" }, { cat: "アイスフレーバーの", sec: "甘い順" }, { cat: "アイスフレーバーの", sec: "さっぱりしている順" },
-            { cat: "休日の過ごし方の", sec: "疲れる順" }, { cat: "休日の過ごし方の", sec: "お金がかかる順" }, { cat: "休日の過ごし方の", sec: "充実感がある順" },
-            { cat: "掃除の場所の", sec: "面倒な順" }, { cat: "掃除の場所の", sec: "汚れやすい順" }, { cat: "掃除の場所の", sec: "頻繁にやる順" },
-            { cat: "家電の", sec: "買い替える頻度が低い順" }, { cat: "家電の", sec: "高価な順" }, { cat: "家電の", sec: "必須度が高い順" },
-            { cat: "家具の", sec: "場所をとる順" }, { cat: "家具の", sec: "高価な順" }, { cat: "家具の", sec: "必須度が高い順" },
-            { cat: "持ち物の", sec: "忘れると困る順" }, { cat: "持ち物の", sec: "鞄の中でかさばる順" }, { cat: "持ち物の", sec: "定番順" },
-            { cat: "ドラッグストアで買うものの", sec: "必須度が高い順" }, { cat: "ドラッグストアで買うものの", sec: "定番順" },
-            { cat: "100円ショップで買うものの", sec: "コスパが良い順" }, { cat: "100円ショップで買うものの", sec: "ついつい買う順" },
-            { cat: "朝することの", sec: "優先度が高い順" }, { cat: "朝することの", sec: "時間がかかる順" },
-            { cat: "夜することの", sec: "リラックスできる順" }, { cat: "夜することの", sec: "時間がかかる順" },
-            { cat: "日常の贅沢の", sec: "テンションが上がる順" }, { cat: "日常の贅沢の", sec: "お金がかかる順" },
-            { cat: "観光地の", sec: "行きたい順" }, { cat: "観光地の", sec: "人が多い順" }, { cat: "観光地の", sec: "費用がかかる順" },
-            { cat: "都道府県の", sec: "都会な順" }, { cat: "都道府県の", sec: "食べ物が美味しい順" }, { cat: "都道府県の", sec: "観光地が多い順" },
-            { cat: "テーマパークのアトラクションの", sec: "待ち時間が長い順" }, { cat: "テーマパークのアトラクションの", sec: "絶叫度順" }, { cat: "テーマパークのアトラクションの", sec: "定番順" },
-            { cat: "ドライブで行きたい場所の", sec: "遠い順" }, { cat: "ドライブで行きたい場所の", sec: "景色の良い順" },
-            { cat: "デートスポットの", sec: "定番順" }, { cat: "デートスポットの", sec: "緊張する順" }, { cat: "デートスポットの", sec: "おしゃれな順" },
-            { cat: "海水浴の持ち物の", sec: "必須度が高い順" }, { cat: "海水浴の持ち物の", sec: "かさばる順" },
-            { cat: "キャンプ用品の", sec: "必須度が高い順" }, { cat: "キャンプ用品の", sec: "高価な順" },
-            { cat: "新幹線での過ごし方の", sec: "時間が潰せる順" }, { cat: "新幹線での過ごし方の", sec: "定番順" },
-            { cat: "教科の", sec: "得意な人が多い順" }, { cat: "教科の", sec: "難易度が高い順" }, { cat: "教科の", sec: "好きな人が多い順" },
-            { cat: "学校行事の", sec: "盛り上がる順" }, { cat: "学校行事の", sec: "準備が大変な順" }, { cat: "学校行事の", sec: "思い出に残る順" },
-            { cat: "部活動の", sec: "ハードな順" }, { cat: "部活動の", sec: "人気順" }, { cat: "部活動の", sec: "定番順" },
-            { cat: "文房具の", sec: "使用頻度が高い順" }, { cat: "文房具の", sec: "なくしやすい順" },
-            { cat: "動物の", sec: "足が速い順" }, { cat: "動物の", sec: "強い順" }, { cat: "動物の", sec: "かわいい順" },
-            { cat: "小動物の", sec: "飼いやすい順" }, { cat: "小動物の", sec: "人気順" },
-            { cat: "海の生き物の", sec: "凶暴な順" }, { cat: "海の生き物の", sec: "水族館で人気な順" },
-            { cat: "昆虫の", sec: "カッコいい順" }, { cat: "昆虫の", sec: "捕まえるのが難しい順" },
-            { cat: "名作アニメの", sec: "泣ける順" }, { cat: "名作アニメの", sec: "有名な順" },
-            { cat: "ジブリ作品の", sec: "有名な順" }, { cat: "ジブリ作品の", sec: "感動する順" },
-            { cat: "ポケモンのタイプの", sec: "強い順" }, { cat: "ポケモンのタイプの", sec: "人気順" },
-            { cat: "RPGの職業の", sec: "必須度が高い順" }, { cat: "RPGの職業の", sec: "格好いい順" },
-            { cat: "職業の", sec: "憧れる順" }, { cat: "職業の", sec: "専門知識が必要な順" }, { cat: "職業の", sec: "忙しそうな順" },
-            { cat: "ビジネススキルの", sec: "重要な順" }, { cat: "ビジネススキルの", sec: "習得が難しい順" }
+            { cat: "野菜", sec: "甘さ" },
+            { cat: "動物", sec: "寿命" },
+            { cat: "スポーツ", sec: "人気" },
+            { cat: "飲み物", sec: "カフェイン量" },
+            { cat: "果物", sec: "酸っぱさ" },
+            { cat: "寿司ネタ", sec: "値段" },
+            { cat: "家電", sec: "電気代" },
+            { cat: "文房具", sec: "なくしやすさ" },
+            { cat: "乗り物", sec: "スピード" },
+            { cat: "お菓子", sec: "カロリー" },
+            { cat: "楽器", sec: "音の大きさ" },
+            { cat: "職業", sec: "年収" },
+            { cat: "都道府県", sec: "人口" },
+            { cat: "季節の行事", sec: "出費" },
+            { cat: "コンビニ商品", sec: "リピート率" },
+            { cat: "学校の教科", sec: "暗記量" },
+            { cat: "虫", sec: "強さ" },
+            { cat: "パン", sec: "腹持ち" },
+            { cat: "麺類", sec: "カロリー" },
+            { cat: "家具", sec: "重さ" }
         ];
 
         let peer = null, myId = "", myName = "", roomCode = "";
@@ -558,7 +531,7 @@
             hostId: "",
             status: 'LOBBY',
             roundNumber: 1,
-            maxLaps: 2,         // 全員が親をやる周回数 (デフォルト2周)
+            maxLaps: 2,
             parentIndex: 0,
             category: "",
             secretTheme: "",
@@ -568,11 +541,11 @@
             tierPlacements: { S: [], A: [], B: [], C: [], D: [], UNASSIGNED: [] },
             step: 1,
             childGuesses: {},
-            lastResultModal: null,
             isGameOver: false
         };
 
         let localJudgeSelections = {};
+        let lastRenderedPhaseKey = "";
 
         let soundEnabled = true;
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -662,8 +635,10 @@
         window.fillRandomPresetTopic = function() {
             playSound('tap');
             const item = TOPIC_PRESETS[Math.floor(Math.random() * TOPIC_PRESETS.length)];
-            document.getElementById('parentCategoryInput').value = item.cat;
-            document.getElementById('parentSecretInput').value = item.sec;
+            const catInput = document.getElementById('parentCategoryInput');
+            const secInput = document.getElementById('parentSecretInput');
+            if (catInput) catInput.value = item.cat;
+            if (secInput) secInput.value = item.sec;
         };
 
         function handleCreateRoom() {
@@ -780,9 +755,6 @@
                 broadcastState();
             } else if (data.type === 'SELECT_COLOR') {
                 processSelectColor(data.playerId, data.color);
-            } else if (data.type === 'UPDATE_SETTINGS') {
-                roomData.maxLaps = data.maxLaps;
-                broadcastState();
             } else if (data.type === 'SUBMIT_PARENT_THEME') {
                 processSubmitParentTheme(data.category, data.secretTheme);
             } else if (data.type === 'SUBMIT_WORD') {
@@ -797,6 +769,8 @@
                 processSubmitJudgments(data.judgments);
             } else if (data.type === 'NEXT_ROUND') {
                 processStartNextRound();
+            } else if (data.type === 'RETURN_TO_LOBBY') {
+                processReturnToLobby();
             }
         }
 
@@ -840,6 +814,7 @@
                 return;
             }
 
+            Object.values(roomData.players).forEach(p => p.score = 0);
             const select = document.getElementById('lapCountSelect');
             roomData.maxLaps = parseInt(select.value) || 2;
             roomData.roundNumber = 1;
@@ -872,7 +847,7 @@
             const sec = secEl ? secEl.value.trim() : '';
 
             if (!cat || !sec) {
-                alert("ジャンルと秘密の評価軸の両方を入力してください");
+                alert("公開するジャンルと伏せる評価軸の両方を入力してください");
                 return;
             }
 
@@ -986,7 +961,7 @@
             const guessInput = document.getElementById('childGuessInput');
             const guess = guessInput ? guessInput.value.trim() : '';
             if (!guess) {
-                alert("評価軸（裏テーマ）の予想を入力してください");
+                alert("評価軸の予想を入力してください");
                 return;
             }
 
@@ -1061,7 +1036,7 @@
             });
 
             if (anyCorrect) {
-                sendResultModalBroadcast("正解者出ました！🎉", `${correctPlayersNames.join(', ')} が見事見破りました！\n正解の評価軸: 「${roomData.secretTheme}」`, true);
+                sendResultModalBroadcast("正解者出ました！🎉", `${correctPlayersNames.join(', ')} が見事見破りました！\n正解のお題: 「${roomData.category} の ${roomData.secretTheme}」`, true);
                 roomData.status = 'ROUND_RESULT';
                 broadcastState();
             } else {
@@ -1073,7 +1048,7 @@
                     showNotice("💡", "2回目の推理チャンス", "全員不正解でした。追加の単語を記入して再チャレンジ！");
                     broadcastState();
                 } else {
-                    sendResultModalBroadcast("全員不正解", `正解者なし！評価軸は「${roomData.secretTheme}」でした。`, false);
+                    sendResultModalBroadcast("全員不正解", `正解者なし！お題は「${roomData.category} の ${roomData.secretTheme}」でした。`, false);
                     roomData.status = 'ROUND_RESULT';
                     broadcastState();
                 }
@@ -1104,6 +1079,29 @@
             }
         }
 
+        window.returnToLobby = function() {
+            playSound('tap');
+            if (isHost) {
+                processReturnToLobby();
+            } else {
+                hostConn.send({ type: 'RETURN_TO_LOBBY' });
+            }
+        };
+
+        function processReturnToLobby() {
+            roomData.status = 'LOBBY';
+            roomData.isGameOver = false;
+            roomData.roundNumber = 1;
+            roomData.parentIndex = 0;
+            roomData.category = "";
+            roomData.secretTheme = "";
+            roomData.submittedWords = {};
+            roomData.tierPlacements = { S: [], A: [], B: [], C: [], D: [], UNASSIGNED: [] };
+            roomData.childGuesses = {};
+            localJudgeSelections = {};
+            broadcastState();
+        }
+
         function renderRoomState() {
             if (!roomData) return;
 
@@ -1112,6 +1110,24 @@
             const isParent = myId === parentId;
             const totalPlayers = Object.keys(roomData.players).length;
             const maxRounds = totalPlayers * roomData.maxLaps;
+
+            // 現在のフェーズ識別子を作成し、フェーズやステップ切り替わり時のみフォームをクリーンリセット
+            const currentPhaseKey = `${roomData.status}_r${roomData.roundNumber}_s${roomData.step}`;
+            const isNewPhase = lastRenderedPhaseKey !== currentPhaseKey;
+            if (isNewPhase) {
+                lastRenderedPhaseKey = currentPhaseKey;
+                localJudgeSelections = {};
+
+                const catInput = document.getElementById('parentCategoryInput');
+                const secInput = document.getElementById('parentSecretInput');
+                const wordInput = document.getElementById('wordTileInput');
+                const guessInput = document.getElementById('childGuessInput');
+
+                if (catInput) catInput.value = '';
+                if (secInput) secInput.value = '';
+                if (wordInput) wordInput.value = '';
+                if (guessInput) guessInput.value = '';
+            }
 
             const scoreListEl = document.getElementById('headerScoreList');
             if (scoreListEl) {
@@ -1153,7 +1169,7 @@
                     if (waitingMsg) waitingMsg.classList.add('hidden');
                 } else {
                     if (startBtn) startBtn.classList.add('hidden');
-                    if (waitingMsg) waitingMsg.classList.add('hidden'); // ゲストも分かりやすくするため調整
+                    if (waitingMsg) waitingMsg.classList.remove('hidden');
                 }
 
                 const playerList = document.getElementById('playerList');
@@ -1208,12 +1224,12 @@
                 const parentPlayer = roomData.players[parentId];
                 document.getElementById('parentBadge').innerText = `親: ${parentPlayer ? parentPlayer.name : '--'}`;
                 
-                document.getElementById('questionTopic').innerText = roomData.category ? `「${roomData.category} 〜〜 順」` : '「親がお題を設定中」';
+                document.getElementById('questionTopic').innerText = roomData.category ? `「${roomData.category} の ？？？ ランキング」` : '「親がお題を設定中」';
 
                 const secretBox = document.getElementById('secretThemeBox');
                 if (isParent && roomData.secretTheme) {
                     secretBox.classList.remove('hidden');
-                    document.getElementById('secretThemeText').innerText = roomData.secretTheme;
+                    document.getElementById('secretThemeText').innerText = `${roomData.category} の ${roomData.secretTheme}`;
                 } else {
                     secretBox.classList.add('hidden');
                 }
@@ -1226,10 +1242,6 @@
                 if (roomData.status === 'PARENT_THEME_SETUP') {
                     if (isParent) {
                         document.getElementById('subViewParentTheme').classList.remove('hidden');
-                        const catInput = document.getElementById('parentCategoryInput');
-                        const secInput = document.getElementById('parentSecretInput');
-                        if (catInput) catInput.value = '';
-                        if (secInput) secInput.value = '';
                     } else {
                         document.getElementById('subViewParentWaiting').classList.remove('hidden');
                     }
@@ -1240,18 +1252,15 @@
                     const myStepKey = `${myId}_step${roomData.step}`;
                     const hasSubmitted = !!roomData.submittedWords[myStepKey];
                     
-                    const wordInput = document.getElementById('wordTileInput');
                     const btnSubmitWord = document.getElementById('btnSubmitWord');
                     const wordWaitMsg = document.getElementById('wordWaitMsg');
 
                     if (hasSubmitted) {
-                        if (wordInput) wordInput.value = '';
                         btnSubmitWord.classList.add('hidden');
                         wordWaitMsg.classList.remove('hidden');
                         document.getElementById('submittedWordCount').innerText = Object.keys(roomData.submittedWords).length - (roomData.step === 2 ? totalPlayers : 0);
                         document.getElementById('totalWordCount').innerText = totalPlayers;
                     } else {
-                        if (wordInput) wordInput.value = '';
                         btnSubmitWord.classList.remove('hidden');
                         wordWaitMsg.classList.add('hidden');
                     }
@@ -1272,7 +1281,6 @@
                         sharedListEl.appendChild(chip);
                     });
 
-                    // Render Shared Child Guesses List
                     const sharedGuessesListEl = document.getElementById('sharedChildGuessesList');
                     sharedGuessesListEl.innerHTML = '';
                     const guessesEntries = Object.entries(roomData.childGuesses);
@@ -1327,10 +1335,12 @@
                         }
                     } else if (roomData.status === 'GUESSING') {
                         unassignedBox.classList.add('hidden');
-                        tierInst.innerText = "Tier表の位置関係から評価軸（裏テーマ）を推測！";
+                        tierInst.innerText = "Tier表の並び順から評価軸（？？？）を推測！";
 
                         const childArea = document.getElementById('childGuessArea');
                         const parentArea = document.getElementById('parentJudgeArea');
+                        const guessPrefix = document.getElementById('guessTopicPrefix');
+                        if (guessPrefix) guessPrefix.innerText = roomData.category;
 
                         if (isParent) {
                             childArea.classList.add('hidden');
@@ -1367,8 +1377,6 @@
                                 childArea.classList.add('hidden');
                             } else {
                                 childArea.classList.remove('hidden');
-                                const guessInput = document.getElementById('childGuessInput');
-                                if (guessInput) guessInput.value = '';
                             }
                         }
                     }
@@ -1378,15 +1386,37 @@
                     
                     const resPhaseBadge = document.getElementById('resultPhaseBadge');
                     const resTitle = document.getElementById('resultTitle');
+                    const finalRankingBox = document.getElementById('finalRankingBox');
+                    const finalRankingList = document.getElementById('finalRankingList');
 
                     if (roomData.isGameOver) {
                         resPhaseBadge.innerText = "GAME FINISHED 🏆";
                         resTitle.innerText = "全ラウンド終了！最終結果発表";
-                        document.getElementById('resultSecretText').innerText = "お疲れ様でした！最終勝者を称えましょう！";
+                        document.getElementById('resultSecretText').innerText = `最終ラウンドのお題: 「${roomData.category} の ${roomData.secretTheme}」`;
+
+                        // 最終順位の生成・表示
+                        finalRankingBox.classList.remove('hidden');
+                        finalRankingList.innerHTML = '';
+                        const sortedPlayers = Object.values(roomData.players).sort((a, b) => b.score - a.score);
+                        sortedPlayers.forEach((p, idx) => {
+                            const rankIcon = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `${idx + 1}位`;
+                            const row = document.createElement('div');
+                            row.className = `flex justify-between items-center p-3 rounded-xl border ${idx === 0 ? 'bg-amber-500/10 border-amber-400' : 'bg-zinc-900 border-zinc-800'}`;
+                            row.innerHTML = `
+                                <div class="flex items-center gap-2.5">
+                                    <span class="text-base font-black w-7 text-center">${rankIcon}</span>
+                                    <span class="w-3 h-3 rounded-full" style="background-color:${p.color}"></span>
+                                    <span class="font-bold text-sm text-white">${escapeHtml(p.name)}</span>
+                                </div>
+                                <span class="font-mono font-black text-base text-amber-400">${p.score} pt</span>
+                            `;
+                            finalRankingList.appendChild(row);
+                        });
                     } else {
                         resPhaseBadge.innerText = "ROUND FINISHED";
                         resTitle.innerText = "ラウンド終了！";
-                        document.getElementById('resultSecretText').innerText = `正解の評価軸: 「${roomData.secretTheme}」`;
+                        document.getElementById('resultSecretText').innerText = `正解のお題: 「${roomData.category} の ${roomData.secretTheme}」`;
+                        finalRankingBox.classList.add('hidden');
                     }
 
                     ['S', 'A', 'B', 'C', 'D'].forEach(tierKey => {
@@ -1410,22 +1440,22 @@
 
                     const hostNext = document.getElementById('hostNextRoundControls');
                     const clientNext = document.getElementById('clientNextRoundMsg');
+                    const btnAction = document.getElementById('btnNextRoundAction');
 
                     if (isHostUser) {
                         hostNext.classList.remove('hidden');
                         clientNext.classList.add('hidden');
-                        const nextBtn = hostNext.querySelector('button');
                         if (roomData.isGameOver) {
-                            nextBtn.innerText = "ロビーに戻る 🏠";
-                            nextBtn.onclick = () => { location.reload(); };
+                            btnAction.innerText = "ロビーに戻って再戦する 🏠";
+                            btnAction.onclick = () => { returnToLobby(); };
                         } else {
-                            nextBtn.innerText = "次のラウンドへ ➔";
-                            nextBtn.onclick = () => { startNextRound(); };
+                            btnAction.innerText = "次のラウンドへ ➔";
+                            btnAction.onclick = () => { startNextRound(); };
                         }
                     } else {
                         hostNext.classList.add('hidden');
                         clientNext.classList.remove('hidden');
-                        clientNext.innerText = roomData.isGameOver ? "ホストがゲームを終了しました..." : "ホストが次のラウンドを開始するのを待っています...";
+                        clientNext.innerText = roomData.isGameOver ? "ホストがロビーへ戻るのを待っています..." : "ホストが次のラウンドを開始するのを待っています...";
                     }
                 }
             }
